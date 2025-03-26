@@ -1,5 +1,6 @@
-local Config = require("shared.sh_config")
-local Locales = require("shared.sh_locales")
+local Config = require("config.cfg_main")
+local Functions = require("config.cfg_functions")
+local Locales = require("config.cfg_locales")
 
 if Config.Framework ~= "qbox" then return end
 
@@ -58,7 +59,7 @@ local function BuyLicense(source, shopData)
 	elseif bankAvailable >= amount then
 		accountType = "bank"
 	else
-		ServerNotify(source, Locales.License.NoMoney:format(licenseType), "error")
+		Functions.Notify.Server(source, Locales.License.NoMoney:format(licenseType), "error")
 		return false, "No money"
 	end
 
@@ -68,7 +69,7 @@ local function BuyLicense(source, shopData)
 	licenseTable[licenseType] = true
 	Player.Functions.SetMetaData("licences", licenseTable)
 
-	ServerNotify(source, Locales.License.PurchaseSuccess:format(licenseType, amount), "info")
+	Functions.Notify.Server(source, Locales.License.PurchaseSuccess:format(licenseType, amount), "info")
 	return true, "Successfully bought license"
 end
 
@@ -105,7 +106,7 @@ local function ProcessTransaction(source, type, cartArray)
 					AddWeapon(source, item.name)
 					totalCartPrice = totalCartPrice + totalItemPrice
 				else
-					ServerNotify(source, Locales.Notification.HasWeapon:format(item.label), "error")
+					Functions.Notify.Server(source, Locales.Notification.HasWeapon:format(item.label), "error")
 				end
 			else
 				if CanCarryItem(source, item.name, item.quantity) then
@@ -113,16 +114,16 @@ local function ProcessTransaction(source, type, cartArray)
 					AddItem(source, item.name, item.quantity)
 					totalCartPrice = totalCartPrice + totalItemPrice
 				else
-					ServerNotify(source, Locales.Notification.CantCarry:format(item.label), "error")
+					Functions.Notify.Server(source, Locales.Notification.CantCarry:format(item.label), "error")
 				end
 			end
 		else
-			ServerNotify(source, Locales.Notification.NoMoney:format(item.label), "error")
+			Functions.Notify.Server(source, Locales.Notification.NoMoney:format(item.label), "error")
 		end
 	end
 
 	if totalCartPrice > 0 then
-		ServerNotify(source, Locales.Notification.PurchaseSuccess:format(totalCartPrice), "success")
+		Functions.Notify.Server(source, Locales.Notification.PurchaseSuccess:format(totalCartPrice), "success")
 		return true, ("Purchased item(s) for $%s"):format(totalCartPrice)
 	end
 	return false, "No items purchased"

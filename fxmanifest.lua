@@ -6,16 +6,33 @@ use_experimental_fxv2_oal "yes"
 
 author "yiruzu"
 description "Cloud Resources - Shop"
-version "1.2.1"
+version "1.3.0"
 
-discord "https://discord.gg/jAnEnyGBef"
+support "https://discord.gg/jAnEnyGBef"
 repository "https://github.com/yiruzu/cloud-shop"
 license "CC BY-NC"
 
-files { "shared/sh_config.lua", "shared/sh_locales.lua" }
-shared_scripts { "@ox_lib/init.lua", "shared/sh_functions.lua" }
-server_scripts { "bridge/server/*.lua", "server/*.lua" }
-client_scripts { "client/*.lua" }
+shared_scripts {
+    "@ox_lib/init.lua",
+    "shared/utils/*.lua",
+}
+server_scripts {
+    "bridge/server/*.lua",
+    "server/utils/*.lua",
+    "server/modules/*.lua",
+    "server/*.lua",
+}
+client_scripts {
+    "client/utils/*.lua",
+    "client/modules/*.lua",
+    "client/*.lua",
+}
+
+files {
+    "web/dist/**/*",
+    "config/*.lua",
+}
 
 ui_page { "web/dist/index.html" }
-files { "web/dist/**/*" }
+
+dependencies { "ox_lib" }

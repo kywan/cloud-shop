@@ -6,7 +6,7 @@ return {
 	--[[ GENERAL CONFIGURATION ]]
 
 	Framework = "qbox", -- Supported: "esx", "qbcore", or "custom"
-	DebugMode = false, -- Enable print statements for debugging
+	DebugMode = "dev", -- Enable print statements for debugging
 	WeaponAsItem = true, -- Treat weapons as inventory items (only supported inventorys)
 	OxInventory = true, -- Uses ox_inventory exports if true
 
