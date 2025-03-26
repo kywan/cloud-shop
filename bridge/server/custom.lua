@@ -4,7 +4,7 @@ local Config = require("config.cfg_main")
 local Functions = require("config.cfg_functions")
 local Locales = require("config.cfg_locales")
 
-if Config.Framework ~= "custom" then return end
+if not DetectFramework("custom", "your_framework") then return end
 
 local inShop = {}
 

@@ -2,7 +2,7 @@ local Config = require("config.cfg_main")
 local Functions = require("config.cfg_functions")
 local Locales = require("config.cfg_locales")
 
-if Config.Framework ~= "qbcore" then return end
+if not DetectFramework("qbcore", "qb-core") or DetectFramework("qbox", "qbx_core") then return end
 
 local QBCore = exports["qb-core"]:GetCoreObject()
 

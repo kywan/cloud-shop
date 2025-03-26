@@ -5,7 +5,7 @@ return {
 
 	--[[ GENERAL CONFIGURATION ]]
 
-	Framework = "qbox", -- Supported: "esx", "qbcore", or "custom"
+	Framework = "auto", -- Options: "esx", "qbox", "qbcore", "custom", or "auto" (auto-detects avaible options).
 	DebugMode = "dev", -- Debug options: "prod" (minimal logs), "dev" (detailed logs), false (disable logs)
 
 	WeaponAsItem = true, -- Treat weapons as inventory items (only supported inventorys)

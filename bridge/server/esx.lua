@@ -2,7 +2,7 @@ local Config = require("config.cfg_main")
 local Functions = require("config.cfg_functions")
 local Locales = require("config.cfg_locales")
 
-if Config.Framework ~= "esx" then return end
+if not DetectFramework("esx", "es_extended") then return end
 
 local ESX = exports["es_extended"]:getSharedObject()
 
