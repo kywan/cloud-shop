@@ -15,7 +15,7 @@ local function CanCarryItem(source, itemName, itemQuantity)
 	if Config.OxInventory then
 		return exports.ox_inventory:CanCarryItem(source, itemName, itemQuantity)
 	else
-		DebugPrint("QBox framework by default only supports ox-inventory")
+		Print.Error("QBox framework by default only supports ox-inventory")
 		return false
 	end
 end
@@ -24,7 +24,7 @@ local function AddItem(source, itemName, itemQuantity)
 	if Config.OxInventory then
 		return exports.ox_inventory:AddItem(source, itemName, itemQuantity)
 	else
-		DebugPrint("QBox framework by default only supports ox-inventory")
+		Print.Error("QBox framework by default only supports ox-inventory")
 		return false
 	end
 end

@@ -28,7 +28,7 @@ end
 
 local function SpawnPed(pedModel, pedPos, pedScenario)
 	if not IsModelInCdimage(pedModel) or not IsModelAPed(pedModel) then
-		DebugPrint("[SpawnPed] Ped hash is not valid, failed to spawn ped.")
+		Print.Error("[SpawnPed] Ped hash is not valid, failed to spawn ped.")
 		return false
 	end
 
@@ -66,11 +66,11 @@ local function FindShopPed()
 			local distance = #(vector3(pedPos.x, pedPos.y, pedPos.z) - playerPos)
 			if distance <= 5.0 then return ped end
 		else
-			DebugPrint("[FindShopPed] Ped does not exist.")
+			Print.Error("[FindShopPed] Ped does not exist.")
 			return nil
 		end
 	end
-	DebugPrint("[FindShopPed] No shop peds nearby.")
+	Print.Error("[FindShopPed] No shop peds nearby.")
 	return nil
 end
 
@@ -82,7 +82,7 @@ local function ApplySpeechToPed(speechName, speechParam)
 		end
 		PlayPedAmbientSpeechNative(shopPed, speechName, speechParam)
 	else
-		DebugPrint("[ApplySpeechToPed] No valid shop ped to apply speech.")
+		Print.Error("[ApplySpeechToPed] No valid shop ped to apply speech.")
 	end
 end
 
@@ -99,7 +99,7 @@ local function DeleteDistantPeds(maxDistance)
 				table.remove(shopPeds, i)
 			end
 		else
-			DebugPrint("[DeleteDistantPeds] Ped does not exist.")
+			Print.Error("[DeleteDistantPeds] Ped does not exist.")
 		end
 	end
 end
@@ -111,7 +111,7 @@ local function DeletePeds()
 		if DoesEntityExist(ped) then
 			DeleteEntity(ped)
 		else
-			DebugPrint("[DeletePeds] Ped does not exist.")
+			Print.Error("[DeletePeds] Ped does not exist.")
 		end
 	end
 	table.wipe(shopPeds)
@@ -125,7 +125,7 @@ local function OpenShopUI()
 	SetNuiFocus(true, true)
 	inShop = true
 
-	DebugPrint("[OpenShopUI]", json.encode({ "Categories:", currentShop.Categories, "Items:", currentShop.Items }))
+	Print.Verbose("[OpenShopUI]", json.encode({ "Categories:", currentShop.Categories, "Items:", currentShop.Items }))
 
 	lib.callback.await("cloud-shop:server:InShop", false, true)
 	TriggerScreenblurFadeIn(0)
@@ -145,7 +145,7 @@ local function BuyLicenseDialog()
 		lib.callback.await("cloud-shop:server:InShop", false, true)
 
 		local success, reason = lib.callback.await("cloud-shop:server:BuyLicense", false, currentShop)
-		DebugPrint("[BuyLicenseDialog]", reason)
+		Print.Debug("[BuyLicenseDialog]", reason)
 
 		local sound = success and "ROBBERY_MONEY_TOTAL" or "CHECKPOINT_MISSED"
 		local soundSet = success and "HUD_FRONTEND_CUSTOM_SOUNDSET" or "HUD_MINI_GAME_SOUNDSET"
@@ -250,7 +250,7 @@ end
 
 local function HandleTransaction(transactionType, cartArray)
 	local success, reason = lib.callback.await("cloud-shop:server:ProcessTransaction", false, transactionType, cartArray)
-	DebugPrint("[BuyLicenseDialog]", reason)
+	Print.Debug("[BuyLicenseDialog]", reason)
 
 	local sound = success and "ROBBERY_MONEY_TOTAL" or "CHECKPOINT_MISSED"
 	local soundSet = success and "HUD_FRONTEND_CUSTOM_SOUNDSET" or "HUD_MINI_GAME_SOUNDSET"
@@ -269,7 +269,7 @@ RegisterNuiCallback("shop:fetchData", function(data, cb)
 			cb(success)
 		end,
 		payCart = function()
-			DebugPrint("[NUI:payCart] Payment Type:", data.type, "Cart Array:", json.encode(data.cart))
+			Print.Info("[NUI:payCart] Payment Type:", data.type, "Cart Array:", json.encode(data.cart))
 
 			local success = HandleTransaction(data.type, data.cart)
 			if success then ApplySpeechToPed("Generic_Thanks", "Speech_Params_Force_Shouted_Critical") end
