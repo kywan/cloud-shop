@@ -59,7 +59,11 @@ local function BuyLicense(source, shopData)
 	elseif bankAvailable >= amount then
 		accountType = "bank"
 	else
-		Functions.Notify.Server(source, Locales.License.NoMoney:format(licenseType), "error")
+		Functions.Notify.Server(source, {
+			title = Locales.Notify.NoMoney.License.title,
+			description = Locales.Notify.NoMoney.License.description:format(licenseTypeLabel),
+			type = Locales.Notify.NoMoney.License.type,
+		})
 		return false, "No money"
 	end
 
@@ -69,7 +73,11 @@ local function BuyLicense(source, shopData)
 	licenseTable[licenseType] = true
 	Player.Functions.SetMetaData("licences", licenseTable)
 
-	Functions.Notify.Server(source, Locales.License.PurchaseSuccess:format(licenseType, amount), "info")
+	Functions.Notify.Server(source, {
+		title = Locales.Notify.PaymentSuccess.License.title,
+		description = Locales.Notify.PaymentSuccess.License.description:format(licenseTypeLabel, amount),
+		type = Locales.Notify.PaymentSuccess.License.type,
+	})
 	return true, "Successfully bought license"
 end
 
@@ -106,7 +114,11 @@ local function ProcessTransaction(source, type, cartArray)
 					AddWeapon(source, item.name)
 					totalCartPrice = totalCartPrice + totalItemPrice
 				else
-					Functions.Notify.Server(source, Locales.Notification.HasWeapon:format(item.label), "error")
+					Functions.Notify.Server(source, {
+						title = Locales.Notify.CantCarry.Weapons.title,
+						description = Locales.Notify.CantCarry.Weapons.description:format(item.label),
+						type = Locales.Notify.CantCarry.Weapons.type,
+					})
 				end
 			else
 				if CanCarryItem(source, item.name, item.quantity) then
@@ -114,16 +126,28 @@ local function ProcessTransaction(source, type, cartArray)
 					AddItem(source, item.name, item.quantity)
 					totalCartPrice = totalCartPrice + totalItemPrice
 				else
-					Functions.Notify.Server(source, Locales.Notification.CantCarry:format(item.label), "error")
+					Functions.Notify.Server(source, {
+						title = Locales.Notify.CantCarry.Item.title,
+						description = Locales.Notify.CantCarry.Item.description:format(item.label),
+						type = Locales.Notify.CantCarry.Item.type,
+					})
 				end
 			end
 		else
-			Functions.Notify.Server(source, Locales.Notification.NoMoney:format(item.label), "error")
+			Functions.Notify.Server(source, {
+				title = Locales.Notify.NoMoney.Shop.title,
+				description = Locales.Notify.NoMoney.Shop.description:format(item.label),
+				type = Locales.Notify.NoMoney.Shop.type,
+			})
 		end
 	end
 
 	if totalCartPrice > 0 then
-		Functions.Notify.Server(source, Locales.Notification.PurchaseSuccess:format(totalCartPrice), "success")
+		Functions.Notify.Server(source, {
+			title = Locales.Notify.PaymentSuccess.Shop.title,
+			description = Locales.Notify.PaymentSuccess.Shop.description:format(totalCartPrice),
+			type = Locales.Notify.PaymentSuccess.Shop.type,
+		})
 		return true, ("Purchased item(s) for $%s"):format(totalCartPrice)
 	end
 	return false, "No items purchased"
