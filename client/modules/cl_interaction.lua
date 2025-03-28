@@ -17,16 +17,16 @@ local function OpenShopUI()
 
 	ShopPeds.ApplySpeech("Generic_Hi", "Speech_Params_Force")
 end
-local function OpenShop(location, data)
-	if not location or not data then return end
-	LocalPlayer.state.currentShop = location
+local function OpenShop(shopKey, shopData)
+	if not shopKey or not shopData then return end
+	LocalPlayer.state.currentShop = shopKey
 
-	Print.Verbose("[OpenShop]", json.encode({ "Categories:", data.Categories, "Items:", data.Items }))
+	Print.Verbose("[OpenShop]", json.encode({ "Categories:", shopData.Categories, "Items:", shopData.Items }))
 
-	if data.License.Required then
-		local hasLicense = lib.callback.await("cloud-shop:server:HasLicense", false, data.License.Type)
+	if shopData.License.Required then
+		local hasLicense = lib.callback.await("cloud-shop:server:HasLicense", false, shopData.License.Type)
 		if not hasLicense then
-			HandleLicense(data)
+			HandleLicense(shopData)
 			return
 		end
 	end

@@ -17,52 +17,52 @@ LocalPlayer.state.currentShop = nil
 
 --[[ INITIALIZATION ]]
 
-local function CreatePoints(location, data, coords)
+local function CreatePoints(shopKey, shopData, shopCoords)
 	local shopPoint = lib.points.new({
-		coords = coords,
-		distance = data.PointRadius,
-		interactDistance = GetInteractDistance(data),
+		coords = shopCoords,
+		distance = shopData.PointRadius,
+		interactDistance = GetInteractDistance(shopData),
 		ped = nil,
 	})
 
 	function shopPoint:onEnter()
-		if data.Indicator.Ped.Enabled then self.ped = ShopPeds.Spawn(data, self.coords) end
+		if shopData.Indicator.Ped.Enabled then self.ped = ShopPeds.Spawn(shopData, self.coords) end
 	end
 	function shopPoint:onExit()
-		if data.Indicator.Ped.Enabled then ShopPeds.Delete(self.ped) end
+		if shopData.Indicator.Ped.Enabled then ShopPeds.Delete(self.ped) end
 	end
 
 	function shopPoint:nearby()
 		if not LocalPlayer.state.inShop then
-			if data.Indicator.Marker.Enabled then
-				local markerConfig = data.Indicator.Marker
+			if shopData.Indicator.Marker.Enabled then
+				local markerConfig = shopData.Indicator.Marker
 				---@diagnostic disable-next-line: missing-parameter
 				DrawMarker(markerConfig.Type, self.coords.x, self.coords.y, self.coords.z, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, markerConfig.Size.x, markerConfig.Size.y, markerConfig.Size.z, markerConfig.Color[1], markerConfig.Color[2], markerConfig.Color[3], markerConfig.Color[4], markerConfig.BobUpAndDown, markerConfig.FaceCamera, 2, markerConfig.Rotate)
 			end
 		end
 
-		if data.Interaction.HelpText.Enabled or data.Interaction.FloatingText.Enabled then
+		if shopData.Interaction.HelpText.Enabled or shopData.Interaction.FloatingText.Enabled then
 			if self.isClosest and self.currentDistance <= self.interactDistance then
 				if IsPlayerDead(cache.playerId) or IsPedInAnyVehicle(cache.ped, false) then return end
 
 				if not LocalPlayer.state.inShop then
-					if data.Interaction.HelpText.Enabled then Functions.Interact.HelpText(Locales.Interaction.HelpText) end
+					if shopData.Interaction.HelpText.Enabled then Functions.Interact.HelpText(Locales.Interaction.HelpText) end
 					if shopData.Interaction.FloatingText.Enabled then Functions.Interact.FloatingHelpText(Locales.Interaction.FloatingText, self.ped, self.coords) end
 				end
 
-				if IsControlJustReleased(0, data.Interaction.OpenKey) then Interaction.Open(location, data) end
+				if IsControlJustReleased(0, shopData.Interaction.OpenKey) then Interaction.Open(shopKey, shopData) end
 			end
 		end
 	end
 end
 
-for location, data in pairs(Config.Shops) do
-	for i = 1, #data.Locations do
-		local coords = data.Locations[i]
+for shopKey, shopData in pairs(Config.Shops) do
+	for i = 1, #shopData.Locations do
+		local shopCoords = shopData.Locations[i]
 
-		if data.Blip.Enabled then CreateBlip(coords, data.Blip) end
-		CreatePoints(location, data, coords)
-		if data.Interaction.Target.Enabled then Functions.Interact.AddTarget(location, data, coords) end
+		if shopData.Blip.Enabled then CreateBlip(shopCoords, shopData.Blip) end
+		CreatePoints(shopKey, shopData, shopCoords)
+		if shopData.Interaction.Target.Enabled then Functions.Interact.AddTarget(shopKey, shopData, shopCoords) end
 	end
 end
 

@@ -1,10 +1,14 @@
 -- Configuration
 local Locales = require("config.cfg_locales")
 
-local function LicenseDialog(data)
+local function LicenseDialog(shopData)
+	local licenseType = shopData.License.Type
+	local licenseLabel = shopData.License.Label
+	local licensePrice = shopData.License.Price
+
 	local licenseDialog = lib.alertDialog({
-		header = Locales.Dialog.License.Header:format(data.License.TypeLabel),
-		content = Locales.Dialog.License.Content:format(data.License.TypeLabel, data.License.Price),
+		header = Locales.Dialog.License.Header:format(shopData.License.Label),
+		content = Locales.Dialog.License.Content:format(shopData.License.Label, shopData.License.Price),
 		centered = true,
 		cancel = true,
 		size = "sm",
@@ -12,7 +16,7 @@ local function LicenseDialog(data)
 	if licenseDialog == "confirm" then
 		lib.callback.await("cloud-shop:server:InShop", false, true)
 
-		local success, reason = lib.callback.await("cloud-shop:server:BuyLicense", false, data)
+		local success, reason = lib.callback.await("cloud-shop:server:BuyLicense", false, shopData)
 		Print.Debug("[LicenseDialog]", reason)
 
 		local sound = success and "ROBBERY_MONEY_TOTAL" or "CHECKPOINT_MISSED"
@@ -23,16 +27,16 @@ local function LicenseDialog(data)
 	end
 end
 
-local function HandleLicense(data)
-	if not data.License.BuyDialog then
+local function HandleLicense(shopData)
+	if not shopData.License.BuyDialog then
 		Functions.Notify.Client({
 			title = Locales.Notify.Require.License.title,
-			description = Locales.Notify.Require.License.description:format(data.License.TypeLabel),
+			description = Locales.Notify.Require.License.description:format(shopData.License.Label),
 			type = Locales.Notify.Require.License.type,
 		})
 		return
 	end
-	LicenseDialog(data)
+	LicenseDialog(shopData)
 end
 
 return HandleLicense
