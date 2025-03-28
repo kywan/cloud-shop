@@ -2,10 +2,8 @@
 local Functions = require("config.cfg_functions")
 
 -- Modules
+local ShopPeds = require("client.modules.cl_shop-ped")
 local HandleLicense = require("client.modules.cl_license")
-
--- Utils
-local ApplySpeechToPed = require("client.utils.cl_ped-speech")
 
 local function OpenShopUI()
 	Functions.ToggleHud(false)
@@ -17,7 +15,7 @@ local function OpenShopUI()
 	LocalPlayer.state.inShop = true
 	lib.callback.await("cloud-shop:server:InShop", false, true)
 
-	ApplySpeechToPed("Generic_Hi", "Speech_Params_Force")
+	ShopPeds.ApplySpeech("Generic_Hi", "Speech_Params_Force")
 end
 local function OpenShop(location, data)
 	if not location or not data then return end
@@ -48,7 +46,7 @@ end
 local function CloseShop()
 	LocalPlayer.state.currentShop = nil
 	CloseShopUI()
-	ApplySpeechToPed("Generic_Bye", "Speech_Params_Force")
+	ShopPeds.ApplySpeech("Generic_Bye", "Speech_Params_Force")
 end
 
 return {

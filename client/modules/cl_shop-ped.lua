@@ -72,9 +72,21 @@ local function RemoveAllPeds()
 	peds = {}
 end
 
+local function ApplySpeechToPed(speechName, speechParam)
+	local shopPed = GetNearestPed()
+	if not shopPed then
+		Print.Error("[ApplySpeechToPed] No valid ped found within 15.0 units to apply speech.")
+		return
+	end
+
+	if IsAmbientSpeechPlaying(shopPed) then StopCurrentPlayingAmbientSpeech(shopPed) end
+	PlayPedAmbientSpeechNative(shopPed, speechName, speechParam)
+end
+
 return {
 	Spawn = SpawnPed,
 	GetNearest = GetNearestPed,
 	Delete = RemovePed,
 	DeleteAll = RemoveAllPeds,
+	ApplySpeech = ApplySpeechToPed,
 }

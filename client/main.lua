@@ -10,7 +10,6 @@ local ShopPeds = require("client.modules.cl_shop-ped")
 -- Utils
 local HandleTransaction = require("client.utils.cl_transaction")
 local CreateBlip = require("client.utils.cl_create-blip")
-local ApplySpeechToPed = require("client.utils.cl_ped-speech")
 
 LocalPlayer.state.inShop = false
 LocalPlayer.state.currentShop = nil
@@ -91,7 +90,7 @@ RegisterNuiCallback("shop:fetchData", function(data, cb)
 			Print.Info("[NUI:payCart] Payment Type:", data.type, "Cart Array:", json.encode(data.cart))
 
 			local success = HandleTransaction(data.type, data.cart)
-			if success then ApplySpeechToPed("Generic_Thanks", "Speech_Params_Force_Shouted_Critical") end
+			if success then ShopPeds.ApplySpeech("Generic_Thanks", "Speech_Params_Force_Shouted_Critical") end
 			cb(success)
 		end,
 
