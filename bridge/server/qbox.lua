@@ -4,7 +4,7 @@ local Locales = require("config.cfg_locales")
 
 if not DetectFramework("qbox", "qbx_core") then return end
 
-local function GetPlayerId(source)
+local function GetPlayerObject(source)
 	if not source or source == 0 then return nil end
 	return exports.qbx_core:GetPlayer(source)
 end
@@ -13,7 +13,7 @@ local function HasLicense(source, licenseType)
 	if not source or source == 0 then return false end
 	if not licenseType then return false end
 
-	local Player = GetPlayerId(source)
+	local Player = GetPlayerObject(source)
 	if not Player then return false end
 
 	return Player.PlayerData.metadata.licences[licenseType]
@@ -24,7 +24,7 @@ function AddLicense(source, licenseType)
 	if not source or source == 0 then return end
 	if not licenseType then return end
 
-	local Player = GetPlayerId(source)
+	local Player = GetPlayerObject(source)
 	if not Player then return end
 
 	local licenseTable = Player.PlayerData.metadata.licences
@@ -59,13 +59,13 @@ function AddWeapon(source, weaponName)
 end
 
 function GetMoney(source, accountType)
-	local Player = GetPlayerId(source)
+	local Player = GetPlayerObject(source)
 	if not Player then return nil end
 	return Player.Functions.GetMoney(accountType) or 0
 end
 
 function RemoveMoney(source, accountType, amount)
-	local Player = GetPlayerId(source)
+	local Player = GetPlayerObject(source)
 	if not Player then return end
 	Player.Functions.RemoveMoney(accountType, amount)
 end
