@@ -48,7 +48,7 @@ onMounted(async () => {
 <template>
   <section class="shop__left-items">
     <div v-for="item in filteredItems" :key="item.name">
-      <div v-if="shopStore.selectedCategory === 'all' || shopStore.selectedCategory === item.category" class="item">
+      <div class="item">
         <div class="front">
           <div class="image-wrapper">
             <img :src="getImageSrc(item.name)" draggable="false" />
