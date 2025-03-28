@@ -7,6 +7,7 @@ import { useShopStore } from "@/stores/shop"
 const shopStore = useShopStore()
 
 // Utils
+import { fetchData } from "@/utils/api"
 import { formatPrice } from "@/utils/formatPrice"
 import { getImageSrc } from "@/utils/getImageSrc"
 
@@ -18,6 +19,7 @@ const decrementQuantity = (index: number): void => {
   item.quantity--
   if (item.quantity === 0) {
     shopStore.cart.splice(index, 1)
+    fetchData({ label: "removeFromCart" })
   }
 }
 const incrementQuantity = (index: number): void => {

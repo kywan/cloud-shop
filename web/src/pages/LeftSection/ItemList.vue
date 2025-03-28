@@ -11,6 +11,7 @@ import { useShopEvents } from "@/composables/useShopEvents"
 const { getItems, getLocales } = useShopEvents()
 
 // Utils
+import { fetchData } from "@/utils/api"
 import { formatPrice } from "@/utils/formatPrice"
 import { getImageSrc } from "@/utils/getImageSrc"
 
@@ -20,21 +21,22 @@ const filteredItems = computed(() => {
 
 const addToCart = (name: string): void => {
   const item = shopStore.items.find(item => item.name === name)
-  if (item) {
-    const existingIndex = shopStore.cart.findIndex(cartItem => cartItem.name === item.name)
+  if (!item) return
 
-    if (existingIndex !== -1) {
-      shopStore.cart[existingIndex].quantity += 1
-    } else {
-      shopStore.cart.push({
-        label: item.label,
-        name: item.name,
-        price: item.price,
-        quantity: 1,
-        category: item.category,
-      })
-    }
+  const existingIndex = shopStore.cart.findIndex(cartItem => cartItem.name === item.name)
+
+  if (existingIndex !== -1) {
+    shopStore.cart[existingIndex].quantity += 1
+  } else {
+    shopStore.cart.push({
+      label: item.label,
+      name: item.name,
+      price: item.price,
+      quantity: 1,
+      category: item.category,
+    })
   }
+  fetchData({ label: "addToCart" })
 }
 
 onMounted(async () => {

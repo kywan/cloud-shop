@@ -86,6 +86,20 @@ RegisterNuiCallback("shop:fetchData", function(data, cb)
 			local success = pcall(Interaction.Close)
 			cb(success)
 		end,
+
+		selectCategory = function()
+			PlaySoundFrontend(-1, "SELECT", "HUD_FREEMODE_SOUNDSET", true)
+			cb(true)
+		end,
+		addToCart = function()
+			PlaySoundFrontend(-1, "Click", "DLC_HEIST_HACKING_SNAKE_SOUNDS", true)
+			cb(true)
+		end,
+		removeFromCart = function()
+			PlaySoundFrontend(-1, "Pin_Bad", "DLC_HEIST_BIOLAB_PREP_HACKING_SOUNDS", true)
+			cb(true)
+		end,
+
 		payCart = function()
 			Print.Info("[NUI:payCart] Payment Type:", data.type, "Cart Array:", json.encode(data.cart))
 

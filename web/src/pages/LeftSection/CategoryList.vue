@@ -11,9 +11,13 @@ const shopStore = useShopStore()
 import { useShopEvents } from "@/composables/useShopEvents"
 const { getCategories } = useShopEvents()
 
+// Utils
+import { fetchData } from "@/utils/api"
+
 const selectCategory = (category: string): void => {
   shopStore.selectedCategory = category
   scrollIntoView()
+  fetchData({ label: "selectCategory" })
 }
 
 const categorySlideRef = ref<HTMLElement | null>(null)
