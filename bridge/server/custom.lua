@@ -15,34 +15,6 @@ local function GetPlayerId(source)
 	return Your_Framework.GetPlayer(source) -- example
 end
 
---- Checks if the player can carry the specified item and quantity.
----@param source number -- Player's source ID
----@param itemName string -- The name of the item
----@param itemQuantity number -- The quantity of the item
----@return boolean -- True if the player can carry the item, false otherwise
-local function CanCarryItem(source, itemName, itemQuantity)
-	if Config.Inventory.OxInventory then
-		return exports.ox_inventory:CanCarryItem(source, itemName, itemQuantity)
-	else
-		local Player = GetPlayerId(source)
-		return Player.CanCarryItem(source, itemName, itemQuantity) -- example
-	end
-end
-
---- Adds an item to the player's inventory.
----@param source number -- Player's source ID
----@param itemName string -- The name of the item
----@param itemQuantity number -- The quantity of the item
----@return boolean -- True if the item was successfully added, false otherwise
-local function AddItem(source, itemName, itemQuantity)
-	if Config.Inventory.OxInventory then
-		return exports.ox_inventory:AddItem(source, itemName, itemQuantity)
-	else
-		local Player = GetPlayerId(source)
-		return Player.AddItem(source, itemName, itemQuantity) -- example
-	end
-end
-
 --- Checks if the player has the specific license.
 ---@param source number -- Player's source ID
 ---@param licenseType string -- License type (e.g., "weapon")
@@ -102,102 +74,75 @@ local function BuyLicense(source, shopData)
 	return true, "Successfully bought license"
 end
 
-if not Config.Inventory.WeaponAsItem and not Config.Inventory.OxInventory then
-	--- Checks if the player already has the specified weapon.
-	---@param source number -- Player's source ID
-	---@param weaponName string -- The name of the weapon
-	---@return boolean -- True if the player has the weapon, false otherwise
-	function HasWeapon(source, weaponName)
-		if not source or source == 0 then return false end
-		local Player = GetPlayerId(source)
-		return Player.HasWeapon(weaponName) -- example
-	end
-
-	--- Adds a weapon to the player.
-	---@param source number -- Player's source ID
-	---@param weaponName string -- The name of the weapon
-	---@return boolean -- True if the item was successfully added, false otherwise
-	function AddWeapon(source, weaponName)
-		if not source or source == 0 then return false end
-		local Player = GetPlayerId(source)
-		return Player.AddWeapon(weaponName) -- example
-	end
-end
-
---- Processes a shop transaction for a player
+--- Checks if the player can carry the specified item and quantity.
 ---@param source number -- Player's source ID
----@param type string -- Transaction type ("bank" or "money")
----@param cartArray table -- Array of items to purchase
----@return boolean -- Success status of transaction
----@return string -- Reason for transaction outcome
-local function ProcessTransaction(source, type, cartArray)
-	if not source or source == 0 then return false, "Invalid source" end
-	if not cartArray or #cartArray == 0 then return false, "Invalid or empty cart array" end
-	if not inShop[source] then return false, "Not in shop state" end
-
-	local Player = GetPlayerId(source)
-	if not Player then return false, "Player not found" end
-
-	local accountType = type == "bank" and "bank" or "money"
-	local totalCartPrice = 0
-
-	for _, item in ipairs(cartArray) do
-		local availableMoney = Player.GetMoney(accountType) or 0 -- example
-		local totalItemPrice = (item.price * item.quantity) or 0
-
-		if availableMoney >= totalItemPrice then
-			local isWeapon = item.name:sub(1, 7):lower() == "weapon_"
-			if isWeapon and not Config.Inventory.WeaponAsItem and not Config.Inventory.OxInventory then
-				if not HasWeapon(source, item.name) then
-					Player.RemoveMoney(accountType, totalItemPrice) -- example
-					AddWeapon(source, item.name)
-					totalCartPrice = totalCartPrice + totalItemPrice
-				else
-					Functions.Notify.Server(source, {
-						title = Locales.Notify.CantCarry.Weapons.title,
-						description = Locales.Notify.CantCarry.Weapons.description:format(item.label),
-						type = Locales.Notify.CantCarry.Weapons.type,
-					})
-				end
-			else
-				if CanCarryItem(source, item.name, item.quantity) then
-					Player.RemoveMoney(accountType, totalItemPrice) -- example
-					AddItem(source, item.name, item.quantity)
-					totalCartPrice = totalCartPrice + totalItemPrice
-				else
-					Functions.Notify.Server(source, {
-						title = Locales.Notify.CantCarry.Item.title,
-						description = Locales.Notify.CantCarry.Item.description:format(item.label),
-						type = Locales.Notify.CantCarry.Item.type,
-					})
-				end
-			end
-		else
-			Functions.Notify.Server(source, {
-				title = Locales.Notify.NoMoney.Shop.title,
-				description = Locales.Notify.NoMoney.Shop.description:format(item.label),
-				type = Locales.Notify.NoMoney.Shop.type,
-			})
-		end
+---@param itemName string -- The name of the item
+---@param itemQuantity number -- The quantity of the item
+---@return boolean -- True if the player can carry the item, false otherwise
+function CanCarryItem(source, itemName, itemQuantity)
+	if Config.Inventory.OxInventory then
+		return exports.ox_inventory:CanCarryItem(source, itemName, itemQuantity)
+	else
+		local Player = GetPlayerId(source)
+		return Player.CanCarryItem(source, itemName, itemQuantity) -- example
 	end
-
-	if totalCartPrice > 0 then
-		Functions.Notify.Server(source, {
-			title = Locales.Notify.PaymentSuccess.Shop.title,
-			description = Locales.Notify.PaymentSuccess.Shop.description:format(totalCartPrice),
-			type = Locales.Notify.PaymentSuccess.Shop.type,
-		})
-		return true, ("Purchased item(s) for $%s"):format(totalCartPrice)
-	end
-	return false, "No items purchased"
 end
 
+--- Adds an item to the player's inventory.
+---@param source number -- Player's source ID
+---@param itemName string -- The name of the item
+---@param itemQuantity number -- The quantity of the item
+---@return boolean -- True if the item was successfully added, false otherwise
+function AddItem(source, itemName, itemQuantity)
+	if Config.Inventory.OxInventory then
+		return exports.ox_inventory:AddItem(source, itemName, itemQuantity)
+	else
+		local Player = GetPlayerId(source)
+		return Player.AddItem(source, itemName, itemQuantity) -- example
+	end
+end
+
+--- Checks if the player already has the specified weapon.
+---@param source number -- Player's source ID
+---@param weaponName string -- The name of the weapon
+---@return boolean -- True if the player has the weapon, false otherwise
+function HasWeapon(source, weaponName)
+	if not source or source == 0 then return false end
+	local Player = GetPlayerId(source)
+	return Player.HasWeapon(weaponName) -- example
+end
+
+--- Adds a weapon to the player.
+---@param source number -- Player's source ID
+---@param weaponName string -- The name of the weapon
+---@return boolean -- True if the item was successfully added, false otherwise
+function AddWeapon(source, weaponName)
+	if not source or source == 0 then return false end
+	local Player = GetPlayerId(source)
+	return Player.AddWeapon(weaponName) -- example
+end
+
+--- Gets the player's money balance for the specified account type
+---@param source number -- Player's source ID
+---@param accountType string -- Account type (e.g., "cash", "bank")
+---@return number|nil -- The amount of money in the specified account
+function GetMoney(source, accountType)
+	local Player = GetPlayerId(source)
+	if not Player then return nil end
+	return Player.GetMoney(accountType) or 0 -- Example
+end
+
+--- Removes money from the player's specified account
+---@param source number -- Player's source ID
+---@param accountType string -- Account type (e.g., "cash", "bank")
+---@param amount number -- The amount of money to remove
+function RemoveMoney(source, accountType, amount)
+	local Player = GetPlayerId(source)
+	if not Player then return end
+	Player.RemoveMoney(accountType, amount) -- Example
+end
 lib.callback.register("cloud-shop:server:HasLicense", HasLicense)
 lib.callback.register("cloud-shop:server:BuyLicense", function(source, shopData)
 	local success, reason = BuyLicense(source, shopData)
-	return success, reason
-end)
-lib.callback.register("cloud-shop:server:ProcessTransaction", function(source, type, cartArray)
-	local success, reason = ProcessTransaction(source, type, cartArray)
 	return success, reason
 end)

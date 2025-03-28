@@ -1,5 +1,6 @@
 local function HandleTransaction(transactionType, cartArray)
 	local success, reason = lib.callback.await("cloud-shop:server:ProcessTransaction", false, transactionType, cartArray)
+
 	if reason then Print.Debug("[HandleTransaction]", reason) end
 
 	local sound = success and "ROBBERY_MONEY_TOTAL" or "CHECKPOINT_MISSED"

@@ -6,9 +6,9 @@ local Locales = require("config.cfg_locales")
 -- Modules
 local Interaction = require("client.modules.cl_interaction")
 local ShopPeds = require("client.modules.cl_shop-ped")
+local HandleTransaction = require("client.modules.cl_transaction")
 
 -- Utils
-local HandleTransaction = require("client.utils.cl_transaction")
 local CreateBlip = require("client.utils.cl_create-blip")
 
 LocalPlayer.state.inShop = false

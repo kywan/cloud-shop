@@ -11,28 +11,6 @@ local function GetPlayerId(source)
 	return ESX.GetPlayerFromId(source)
 end
 
-local function CanCarryItem(source, itemName, itemQuantity)
-	if Config.Inventory.OxInventory then
-		return exports.ox_inventory:CanCarryItem(source, itemName, itemQuantity)
-	else
-		local xPlayer = GetPlayerId(source)
-		if not xPlayer then return false end
-
-		return xPlayer.canCarryItem(itemName, itemQuantity)
-	end
-end
-
-local function AddItem(source, itemName, itemQuantity)
-	if Config.Inventory.OxInventory then
-		return exports.ox_inventory:AddItem(source, itemName, itemQuantity)
-	else
-		local xPlayer = GetPlayerId(source)
-		if not xPlayer then return false end
-
-		return xPlayer.addInventoryItem(itemName, itemQuantity)
-	end
-end
-
 local function HasLicense(source, licenseType)
 	if not source or source == 0 then return false end
 	if not licenseType then return false end
@@ -86,82 +64,54 @@ local function BuyLicense(source, shopData)
 	return true, "Successfully bought license"
 end
 
-if not Config.Inventory.WeaponAsItem and not Config.Inventory.OxInventory then
-	function HasWeapon(source, weaponName)
+function CanCarryItem(source, itemName, itemQuantity)
+	if Config.Inventory.OxInventory then
+		return exports.ox_inventory:CanCarryItem(source, itemName, itemQuantity)
+	else
 		local xPlayer = GetPlayerId(source)
 		if not xPlayer then return false end
 
-		return xPlayer.hasWeapon(weaponName)
-	end
-
-	function AddWeapon(source, weaponName)
-		local xPlayer = GetPlayerId(source)
-		if not xPlayer then return false end
-
-		return xPlayer.addWeapon(weaponName, 120)
+		return xPlayer.canCarryItem(itemName, itemQuantity)
 	end
 end
 
-local function ProcessTransaction(source, type, cartArray)
-	if not source or source == 0 then return false, "Invalid source" end
-	if not cartArray or #cartArray == 0 then return false, "Invalid or empty cart array" end
-	if not inShop[source] then return false, "Not in shop state" end
+function AddItem(source, itemName, itemQuantity)
+	if Config.Inventory.OxInventory then
+		return exports.ox_inventory:AddItem(source, itemName, itemQuantity)
+	else
+		local xPlayer = GetPlayerId(source)
+		if not xPlayer then return false end
 
+		return xPlayer.addInventoryItem(itemName, itemQuantity)
+	end
+end
+
+function HasWeapon(source, weaponName)
 	local xPlayer = GetPlayerId(source)
-	if not xPlayer then return false, "Player not found" end
+	if not xPlayer then return false end
 
-	local accountType = type == "bank" and "bank" or "money"
-	local totalCartPrice = 0
+	return xPlayer.hasWeapon(weaponName)
+end
 
-	for _, item in ipairs(cartArray) do
-		local availableMoney = xPlayer.getAccount(accountType).money or 0
-		local totalItemPrice = (item.price * item.quantity) or 0
+function AddWeapon(source, weaponName)
+	local xPlayer = GetPlayerId(source)
+	if not xPlayer then return false end
 
-		if availableMoney >= totalItemPrice then
-			local isWeapon = item.name:sub(1, 7):lower() == "weapon_"
-			if isWeapon and not Config.Inventory.WeaponAsItem and not Config.Inventory.OxInventory then
-				if not HasWeapon(source, item.name) then
-					xPlayer.removeAccountMoney(accountType, totalItemPrice)
-					AddWeapon(source, item.name)
-					totalCartPrice = totalCartPrice + totalItemPrice
-				else
-					Functions.Notify.Server(source, {
-						title = Locales.Notify.CantCarry.Weapons.title,
-						description = Locales.Notify.CantCarry.Weapons.description:format(item.label),
-						type = Locales.Notify.CantCarry.Weapons.type,
-					})
-				end
-			else
-				if CanCarryItem(source, item.name, item.quantity) then
-					xPlayer.removeAccountMoney(accountType, totalItemPrice)
-					AddItem(source, item.name, item.quantity)
-					totalCartPrice = totalCartPrice + totalItemPrice
-				else
-					Functions.Notify.Server(source, {
-						title = Locales.Notify.CantCarry.Item.title,
-						description = Locales.Notify.CantCarry.Item.description:format(item.label),
-						type = Locales.Notify.CantCarry.Item.type,
-					})
-				end
-			end
-		else
-			Functions.Notify.Server(source, {
-				title = Locales.Notify.NoMoney.Shop.title,
-				description = Locales.Notify.NoMoney.Shop.description:format(item.label),
-				type = Locales.Notify.NoMoney.Shop.type,
-			})
-		end
-	end
+	return xPlayer.addWeapon(weaponName, 120)
+end
 
-	if totalCartPrice > 0 then
-		Functions.Notify.Server(source, {
-			title = Locales.Notify.PaymentSuccess.Shop.title,
-			description = Locales.Notify.PaymentSuccess.Shop.description:format(totalCartPrice),
-			type = Locales.Notify.PaymentSuccess.Shop.type,
-		})
-		return true, ("Purchased item(s) for $%s"):format(totalCartPrice)
-	end
-	return false, "No items purchased"
+function GetMoney(source, accountType)
+	accountType = accountType == "cash" and "money" or "bank"
+
+	local Player = GetPlayerId(source)
+	if not Player then return nil end
+	return xPlayer.getAccount(accountType).money or 0
+end
+
+function RemoveMoney(source, accountType, amount)
+	local Player = GetPlayerId(source)
+	if not Player then return end
+	xPlayer.removeAccountMoney(accountType, amount)
 end
 
 lib.callback.register("cloud-shop:server:HasLicense", HasLicense)
