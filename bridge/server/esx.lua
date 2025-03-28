@@ -109,6 +109,8 @@ function GetMoney(source, accountType)
 end
 
 function RemoveMoney(source, accountType, amount)
+	accountType = accountType == "cash" and "money" or "bank"
+
 	local Player = GetPlayerId(source)
 	if not Player then return end
 	xPlayer.removeAccountMoney(accountType, amount)
