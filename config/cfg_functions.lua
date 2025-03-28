@@ -44,10 +44,10 @@ local function HelpText(msg)
 end
 
 --- Displays floating help text near an entity or specific coordinates.
+--- @param msg string The message to display
 --- @param entity? number The entity ID (optional)
 --- @param coords? vector3 The coordinates (required if entity is nil)
---- @param msg string The message to display
-local function FloatingHelpText(entity, coords, msg)
+local function FloatingHelpText(msg, entity, coords)
 	AddTextEntry("FloatingHelpText", msg)
 	SetFloatingHelpTextStyle(1, 1, 2, -1, 3, 0)
 	BeginTextCommandDisplayHelp("FloatingHelpText")

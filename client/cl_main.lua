@@ -55,7 +55,7 @@ local function CreatePoints(location, data, coords)
 
 				if not LocalPlayer.state.inShop then
 					if data.Interaction.HelpText.Enabled then Functions.Interact.HelpText(Locales.Interaction.HelpText) end
-					if data.Interaction.FloatingText.Enabled then Functions.Interact.FloatingHelpText(self.ped, self.coords, Locales.Interaction.FloatingText) end
+					if shopData.Interaction.FloatingText.Enabled then Functions.Interact.FloatingHelpText(Locales.Interaction.FloatingText, self.ped, self.coords) end
 				end
 
 				if IsControlJustReleased(0, data.Interaction.OpenKey) then Interaction.Open(location, data) end
