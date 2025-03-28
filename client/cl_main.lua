@@ -10,20 +10,12 @@ local HandleTransaction = require("client.modules.cl_transaction")
 
 -- Utils
 local CreateBlip = require("client.utils.cl_create-blip")
+local GetInteractDistance = require("client.utils.cl_interact-dist")
 
 LocalPlayer.state.inShop = false
 LocalPlayer.state.currentShop = nil
 
 --[[ INITIALIZATION ]]
-
-local function GetInteractDistance(data)
-	if data.Interaction.HelpText.Enabled then
-		return data.Interaction.HelpText.Distance
-	elseif data.Interaction.FloatingText.Enabled then
-		return data.Interaction.FloatingText.Distance
-	end
-	return nil
-end
 
 local function CreatePoints(location, data, coords)
 	local shopPoint = lib.points.new({
