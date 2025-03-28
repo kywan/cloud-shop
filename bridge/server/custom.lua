@@ -1,8 +1,6 @@
 ---@diagnostic disable: undefined-field
 
 local Config = require("config.cfg_main")
-local Functions = require("config.cfg_functions")
-local Locales = require("config.cfg_locales")
 
 if not DetectFramework("custom", "your_framework") then return end
 

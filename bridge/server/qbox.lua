@@ -1,6 +1,4 @@
 local Config = require("config.cfg_main")
-local Functions = require("config.cfg_functions")
-local Locales = require("config.cfg_locales")
 
 if not DetectFramework("qbox", "qbx_core") then return end
 
