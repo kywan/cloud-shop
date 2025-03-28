@@ -20,48 +20,18 @@ local function HasLicense(source, licenseType)
 
 	return Player.PlayerData.metadata.licences[licenseType]
 end
+lib.callback.register("cloud-shop:server:HasLicense", HasLicense)
 
-local function BuyLicense(source, shopData)
-	if not source or source == 0 then return false, "Invalid source" end
-	if not shopData or next(shopData) == nil then return false, "Invalid or empty shop data" end
-	if not inShop[source] then return false, "Not in shop state" end
+function AddLicense(source, licenseType)
+	if not source or source == 0 then return end
+	if not licenseType then return end
 
 	local Player = GetPlayerId(source)
-	if not Player then return false, "Player not found" end
-
-	local licenseType = shopData.License.Type
-	local licenseTypeLabel = shopData.License.TypeLabel
-	local amount = shopData.License.Price
-
-	local moneyAvailable = Player.Functions.GetMoney("cash")
-	local bankAvailable = Player.Functions.GetMoney("bank")
-
-	local accountType
-	if moneyAvailable >= amount then
-		accountType = "cash"
-	elseif bankAvailable >= amount then
-		accountType = "bank"
-	else
-		Functions.Notify.Server(source, {
-			title = Locales.Notify.NoMoney.License.title,
-			description = Locales.Notify.NoMoney.License.description:format(licenseTypeLabel),
-			type = Locales.Notify.NoMoney.License.type,
-		})
-		return false, "No money"
-	end
-
-	Player.Functions.RemoveMoney(accountType, amount)
+	if not Player then return end
 
 	local licenseTable = Player.PlayerData.metadata.licences
 	licenseTable[licenseType] = true
 	Player.Functions.SetMetaData("licences", licenseTable)
-
-	Functions.Notify.Server(source, {
-		title = Locales.Notify.PaymentSuccess.License.title,
-		description = Locales.Notify.PaymentSuccess.License.description:format(licenseTypeLabel, amount),
-		type = Locales.Notify.PaymentSuccess.License.type,
-	})
-	return true, "Successfully bought license"
 end
 
 function CanCarryItem(source, itemName, itemQuantity)
@@ -101,9 +71,3 @@ function RemoveMoney(source, accountType, amount)
 	if not Player then return end
 	Player.Functions.RemoveMoney(accountType, amount)
 end
-
-lib.callback.register("cloud-shop:server:HasLicense", HasLicense)
-lib.callback.register("cloud-shop:server:BuyLicense", function(source, shopData)
-	local success, reason = BuyLicense(source, shopData)
-	return success, reason
-end)

@@ -26,52 +26,21 @@ local function HasLicense(source, licenseType)
 	local Player = GetPlayerId(source)
 	if not Player then return false end
 
-	return Player.HasLicense(licenseType) -- example
+	return Player.HasLicense(licenseType) -- Example
 end
+lib.callback.register("cloud-shop:server:HasLicense", HasLicense)
 
---- Buys a specific license for the player.
+--- Adds a license to the player
 ---@param source number -- Player's source ID
----@param shopData table -- Table with shop data
----@return boolean -- True if the license was successfully bought, false otherwise
----@return string -- Reason for transaction outcome
-local function BuyLicense(source, shopData)
-	if not source or source == 0 then return false, "Invalid source" end
-	if not shopData or next(shopData) == nil then return false, "Invalid or empty shop data" end
-	if not inShop[source] then return false, "Not in shop state" end
+---@param licenseType string -- License type to add
+function AddLicense(source, licenseType)
+	if not source or source == 0 then return end
+	if not licenseType then return end
 
 	local Player = GetPlayerId(source)
-	if not Player then return false, "Player not found" end
+	if not Player then return end
 
-	local licenseType = shopData.License.Type
-	local licenseTypeLabel = shopData.License.TypeLabel
-	local amount = shopData.License.Price
-
-	local moneyAvailable = Player.GetMoney("cash") -- example
-	local bankAvailable = Player.GetMoney("bank") -- example
-
-	local accountType
-	if moneyAvailable >= amount then
-		accountType = "cash"
-	elseif bankAvailable >= amount then
-		accountType = "bank"
-	else
-		Functions.Notify.Server(source, {
-			title = Locales.Notify.NoMoney.License.title,
-			description = Locales.Notify.NoMoney.License.description:format(licenseTypeLabel),
-			type = Locales.Notify.NoMoney.License.type,
-		})
-		return false, "No money"
-	end
-
-	Player.RemoveMoney(accountType, amount) -- example
-	Player.AddLicense(licenseType) -- example
-
-	Functions.Notify.Server(source, {
-		title = Locales.Notify.PaymentSuccess.License.title,
-		description = Locales.Notify.PaymentSuccess.License.description:format(licenseTypeLabel, amount),
-		type = Locales.Notify.PaymentSuccess.License.type,
-	})
-	return true, "Successfully bought license"
+	Player.AddLicense(licenseType)
 end
 
 --- Checks if the player can carry the specified item and quantity.
@@ -141,8 +110,3 @@ function RemoveMoney(source, accountType, amount)
 	if not Player then return end
 	Player.RemoveMoney(accountType, amount) -- Example
 end
-lib.callback.register("cloud-shop:server:HasLicense", HasLicense)
-lib.callback.register("cloud-shop:server:BuyLicense", function(source, shopData)
-	local success, reason = BuyLicense(source, shopData)
-	return success, reason
-end)
