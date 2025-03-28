@@ -39,15 +39,15 @@ local function GetNearestPed()
 	for i = 1, #peds do
 		local ped, pedPos = peds[i].ped, peds[i].pos
 
-		if DoesEntityExist(ped) then
-			local distance = #(vector3(pedPos.x, pedPos.y, pedPos.z) - playerPos)
-			if distance <= 5.0 then return ped end
-		else
+		if not DoesEntityExist(ped) then
 			Print.Error("[GetNearestPed] Ped does not exist.")
 			return nil
 		end
+
+		local distance = #(vector3(pedPos.x, pedPos.y, pedPos.z) - playerPos)
+		if distance <= 15.0 then return ped end
 	end
-	Print.Error("[GetNearestPed] No shop peds nearby.")
+	Print.Error("[GetNearestPed] No valid peds found within 15.0 units.")
 	return nil
 end
 
