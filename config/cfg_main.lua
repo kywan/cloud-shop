@@ -129,7 +129,7 @@ return {
 					Distance = 2.5, -- Distance within which help text appears and is interactable
 				},
 				FloatingText = {
-					Enabled = true, -- If true, displays floating text above the garage NPC
+					Enabled = true, -- If true, displays floating text above the shop NPC
 					Distance = 2.5, -- Distance within which floating text is visible and interactable
 				},
 				Target = { -- Uses ox_target by default --? (modifiable in config/cfg_functions.lua)
