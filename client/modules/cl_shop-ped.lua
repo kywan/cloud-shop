@@ -56,7 +56,8 @@ local function RemovePed(ped)
 	DeletePed(ped)
 
 	for i = 1, #peds do
-		if peds[i].ped == ped then
+		local shopPed = peds[i].ped
+		if shopPed == ped then
 			peds[i] = peds[#peds]
 			peds[#peds] = nil
 			break
@@ -67,7 +68,7 @@ end
 local function RemoveAllPeds()
 	for i = 1, #peds do
 		local ped = peds[i].ped
-		if DoesEntityExist(ped) then DeleteEntity(ped) end
+		if DoesEntityExist(ped) then DeletePed(ped) end
 	end
 	peds = {}
 end
