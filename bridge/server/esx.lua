@@ -14,7 +14,7 @@ local function GetPlayerId(source)
 end
 
 local function CanCarryItem(source, itemName, itemQuantity)
-	if Config.OxInventory then
+	if Config.Inventory.OxInventory then
 		return exports.ox_inventory:CanCarryItem(source, itemName, itemQuantity)
 	else
 		local xPlayer = GetPlayerId(source)
@@ -25,7 +25,7 @@ local function CanCarryItem(source, itemName, itemQuantity)
 end
 
 local function AddItem(source, itemName, itemQuantity)
-	if Config.OxInventory then
+	if Config.Inventory.OxInventory then
 		return exports.ox_inventory:AddItem(source, itemName, itemQuantity)
 	else
 		local xPlayer = GetPlayerId(source)
@@ -88,7 +88,7 @@ local function BuyLicense(source, shopData)
 	return true, "Successfully bought license"
 end
 
-if not Config.WeaponAsItem and not Config.OxInventory then
+if not Config.Inventory.WeaponAsItem and not Config.Inventory.OxInventory then
 	function HasWeapon(source, weaponName)
 		local xPlayer = GetPlayerId(source)
 		if not xPlayer then return false end
@@ -121,7 +121,7 @@ local function ProcessTransaction(source, type, cartArray)
 
 		if availableMoney >= totalItemPrice then
 			local isWeapon = item.name:sub(1, 7):lower() == "weapon_"
-			if isWeapon and not Config.WeaponAsItem and not Config.OxInventory then
+			if isWeapon and not Config.Inventory.WeaponAsItem and not Config.Inventory.OxInventory then
 				if not HasWeapon(source, item.name) then
 					xPlayer.removeAccountMoney(accountType, totalItemPrice)
 					AddWeapon(source, item.name)

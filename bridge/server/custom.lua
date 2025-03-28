@@ -23,7 +23,7 @@ end
 ---@param itemQuantity number -- The quantity of the item
 ---@return boolean -- True if the player can carry the item, false otherwise
 local function CanCarryItem(source, itemName, itemQuantity)
-	if Config.OxInventory then
+	if Config.Inventory.OxInventory then
 		return exports.ox_inventory:CanCarryItem(source, itemName, itemQuantity)
 	else
 		local Player = GetPlayerId(source)
@@ -37,7 +37,7 @@ end
 ---@param itemQuantity number -- The quantity of the item
 ---@return boolean -- True if the item was successfully added, false otherwise
 local function AddItem(source, itemName, itemQuantity)
-	if Config.OxInventory then
+	if Config.Inventory.OxInventory then
 		return exports.ox_inventory:AddItem(source, itemName, itemQuantity)
 	else
 		local Player = GetPlayerId(source)
@@ -73,6 +73,7 @@ local function BuyLicense(source, shopData)
 	if not Player then return false, "Player not found" end
 
 	local licenseType = shopData.License.Type
+	local licenseTypeLabel = shopData.License.TypeLabel
 	local amount = shopData.License.Price
 
 	local moneyAvailable = Player.GetMoney("cash") -- example
@@ -103,7 +104,7 @@ local function BuyLicense(source, shopData)
 	return true, "Successfully bought license"
 end
 
-if not Config.WeaponAsItem and not Config.OxInventory then
+if not Config.Inventory.WeaponAsItem and not Config.Inventory.OxInventory then
 	--- Checks if the player already has the specified weapon.
 	---@param source number -- Player's source ID
 	---@param weaponName string -- The name of the weapon
@@ -148,7 +149,7 @@ local function ProcessTransaction(source, type, cartArray)
 
 		if availableMoney >= totalItemPrice then
 			local isWeapon = item.name:sub(1, 7):lower() == "weapon_"
-			if isWeapon and not Config.WeaponAsItem and not Config.OxInventory then
+			if isWeapon and not Config.Inventory.WeaponAsItem and not Config.Inventory.OxInventory then
 				if not HasWeapon(source, item.name) then
 					Player.RemoveMoney(accountType, totalItemPrice) -- example
 					AddWeapon(source, item.name)

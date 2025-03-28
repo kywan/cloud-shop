@@ -23,14 +23,14 @@ server_scripts {
     "server/*.lua",
 }
 client_scripts {
-    "client/utils/*.lua",
-    "client/modules/*.lua",
     "client/*.lua",
 }
 
 files {
     "web/dist/**/*",
     "config/*.lua",
+    "client/utils/*.lua",
+    "client/modules/*.lua",
 }
 
 ui_page { "web/dist/index.html" }

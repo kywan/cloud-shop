@@ -1,271 +1,90 @@
----@diagnostic disable: need-check-nil, undefined-field
-
---[[ LOAD FILES ]]
-
+-- Configuration
 local Config = require("config.cfg_main")
 local Functions = require("config.cfg_functions")
 local Locales = require("config.cfg_locales")
 
---[[ VARIABLES & TABLES ]]
+-- Modules
+local Interaction = require("client.modules.cl_interaction")
+local ShopPeds = require("client.modules.cl_shop-ped")
 
-local shopPeds = {}
-local inShop = false
-local currentShop = nil
+-- Utils
+local HandleTransaction = require("client.utils.cl_transaction")
+local CreateBlip = require("client.utils.cl_create-blip")
+local ApplySpeechToPed = require("client.utils.cl_ped-speech")
 
---[[ UTILITY FUNCTIONS ]]
-
-local function CreateBlips(coords, blipSettings)
-	local blip = AddBlipForCoord(coords.x, coords.y, coords.z)
-	SetBlipSprite(blip, blipSettings.Sprite)
-	SetBlipDisplay(blip, 4)
-	SetBlipScale(blip, blipSettings.Scale)
-	SetBlipColour(blip, blipSettings.Color)
-	SetBlipAsShortRange(blip, true)
-	BeginTextCommandSetBlipName("STRING")
-	AddTextComponentString(blipSettings.Name)
-	EndTextCommandSetBlipName(blip)
-end
-
-local function SpawnPed(pedModel, pedPos, pedScenario)
-	if not IsModelInCdimage(pedModel) or not IsModelAPed(pedModel) then
-		Print.Error("[SpawnPed] Ped hash is not valid, failed to spawn ped.")
-		return false
-	end
-
-	RequestModel(pedModel)
-	while not HasModelLoaded(pedModel) do
-		Wait(100)
-	end
-
-	local shopPed = CreatePed(0, pedModel, pedPos.x, pedPos.y, pedPos.z - 1, pedPos.w, false, false)
-	while not DoesEntityExist(shopPed) do
-		Wait(10)
-	end
-
-	if shopPed then
-		SetEntityAsMissionEntity(shopPed, true, true)
-		SetPedFleeAttributes(shopPed, 0, false)
-		SetBlockingOfNonTemporaryEvents(shopPed, true)
-		SetEntityInvincible(shopPed, true)
-		FreezeEntityPosition(shopPed, true)
-		TaskStartScenarioInPlace(shopPed, pedScenario, 0, true)
-		SetModelAsNoLongerNeeded(shopPed)
-		table.insert(shopPeds, { ped = shopPed, pos = pedPos })
-
-		return shopPed
-	end
-end
-
-local function FindShopPed()
-	local playerPos = GetEntityCoords(cache.ped)
-	for i = 1, #shopPeds do
-		local pedData = shopPeds[i]
-		local ped, pedPos = pedData.ped, pedData.pos
-
-		if DoesEntityExist(ped) then
-			local distance = #(vector3(pedPos.x, pedPos.y, pedPos.z) - playerPos)
-			if distance <= 5.0 then return ped end
-		else
-			Print.Error("[FindShopPed] Ped does not exist.")
-			return nil
-		end
-	end
-	Print.Error("[FindShopPed] No shop peds nearby.")
-	return nil
-end
-
-local function ApplySpeechToPed(speechName, speechParam)
-	local shopPed = FindShopPed()
-	if shopPed and DoesEntityExist(shopPed) then
-		while IsAmbientSpeechPlaying(shopPed) do
-			Wait(100)
-		end
-		PlayPedAmbientSpeechNative(shopPed, speechName, speechParam)
-	else
-		Print.Error("[ApplySpeechToPed] No valid shop ped to apply speech.")
-	end
-end
-
-local function DeleteDistantPeds(maxDistance)
-	local playerPos = GetEntityCoords(cache.ped)
-	for i = #shopPeds, 1, -1 do
-		local pedData = shopPeds[i]
-		local ped, pedPos = pedData.ped, pedData.pos
-
-		if DoesEntityExist(ped) then
-			local distance = #(vector3(pedPos.x, pedPos.y, pedPos.z) - playerPos)
-			if distance > maxDistance then
-				DeleteEntity(ped)
-				table.remove(shopPeds, i)
-			end
-		else
-			Print.Error("[DeleteDistantPeds] Ped does not exist.")
-		end
-	end
-end
-
-local function DeletePeds()
-	for i = #shopPeds, 1, -1 do
-		local pedData = shopPeds[i]
-		local ped = pedData.ped
-		if DoesEntityExist(ped) then
-			DeleteEntity(ped)
-		else
-			Print.Error("[DeletePeds] Ped does not exist.")
-		end
-	end
-	table.wipe(shopPeds)
-end
-
---[[ MAIN FUNCTIONS ]]
-
-local function OpenShopUI()
-	Functions.ToggleHud(false)
-	SendNUIMessage({ action = "toggleShop", showShop = true })
-	SetNuiFocus(true, true)
-	inShop = true
-
-	Print.Verbose("[OpenShopUI]", json.encode({ "Categories:", currentShop.Categories, "Items:", currentShop.Items }))
-
-	lib.callback.await("cloud-shop:server:InShop", false, true)
-	TriggerScreenblurFadeIn(0)
-
-	ApplySpeechToPed("Generic_Hi", "Speech_Params_Force")
-end
-
-local function BuyLicenseDialog()
-	local buyLicenseDialog = lib.alertDialog({
-		header = Locales.License.DialogHeader:format(currentShop.License.TypeLabel),
-		content = Locales.License.DialogContent:format(currentShop.License.TypeLabel, currentShop.License.Price),
-		centered = true,
-		cancel = true,
-		size = "xs",
-	})
-	if buyLicenseDialog == "confirm" then
-		lib.callback.await("cloud-shop:server:InShop", false, true)
-
-		local success, reason = lib.callback.await("cloud-shop:server:BuyLicense", false, currentShop)
-		Print.Debug("[BuyLicenseDialog]", reason)
-
-		local sound = success and "ROBBERY_MONEY_TOTAL" or "CHECKPOINT_MISSED"
-		local soundSet = success and "HUD_FRONTEND_CUSTOM_SOUNDSET" or "HUD_MINI_GAME_SOUNDSET"
-		PlaySoundFrontend(-1, sound, soundSet, true)
-
-		lib.callback.await("cloud-shop:server:InShop", false, false)
-	end
-end
-
-local function HandleShopWithLicense()
-	local hasLicense = lib.callback.await("cloud-shop:server:HasLicense", false, currentShop.License.Type)
-	if hasLicense then
-		OpenShopUI()
-	else
-		if not currentShop.License.BuyDialog then Functions.Notify.Client(Locales.License.LicenseRequired:format(currentShop.License.TypeLabel), "error") end
-		if currentShop.License.BuyDialog then BuyLicenseDialog() end
-	end
-end
-
-local function OpenShop(shopId)
-	currentShop = Config.Shops[shopId]
-	if currentShop.License.Required then
-		HandleShopWithLicense()
-	else
-		OpenShopUI()
-	end
-end
-
-local function CloseShopUI()
-	Functions.ToggleHud(true)
-	SendNUIMessage({ action = "toggleShop", showShop = false })
-	SetNuiFocus(false, false)
-	inShop = false
-
-	lib.callback.await("cloud-shop:server:InShop", false, false)
-	TriggerScreenblurFadeOut(0)
-
-	ApplySpeechToPed("Generic_Bye", "Speech_Params_Force")
-end
-
---[[ MAIN LOGIC ]]
-
-local function CreatePoints(shopId, shopData, shopPos)
-	local shopPoint = lib.points.new({
-		coords = shopPos,
-		distance = shopData.RenderDistance,
-	})
-
-	function shopPoint:onEnter()
-		if not (Config.Target.Enabled and Config.Target.DisablePeds) and shopData.NpcPed then SpawnPed(shopData.NpcPed.Model, shopPos, shopData.NpcPed.Scenario) end
-	end
-
-	function shopPoint:onExit()
-		if inShop then CloseShopUI() end
-		DeleteDistantPeds(self.distance)
-	end
-
-	function shopPoint:nearby()
-		---@diagnostic disable-next-line: missing-parameter
-		if not (Config.Target.Enabled and Config.Target.DisableMarkers) and shopData.Marker and not inShop then DrawMarker(shopData.Marker.Type, self.coords.x, self.coords.y, self.coords.z, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, shopData.Marker.Size.x, shopData.Marker.Size.y, shopData.Marker.Size.z, shopData.Marker.Color[1], shopData.Marker.Color[2], shopData.Marker.Color[3], shopData.Marker.Color[4], shopData.Marker.BobUpAndDown, shopData.Marker.FaceCamera, 2, shopData.Marker.Rotate) end
-		if not Config.Target.Enabled then
-			local playerPed = cache.ped
-			local isDead = IsPlayerDead(cache.playerId)
-			if self.isClosest and self.currentDistance < Config.InteractionDistance.TextUI and not isDead and not IsPedInAnyVehicle(playerPed, false) then
-				if not inShop then Functions.Interact.HelpText(Locales.OpenShop.TextUI) end
-				if IsControlJustReleased(0, 38) then OpenShop(shopId) end
-			end
-		end
-	end
-end
-
-local function CreateTargets(shopId, shopPos)
-	exports.ox_target:addBoxZone({
-		coords = shopPos,
-		size = Config.Target.BoxZoneSize,
-		drawSprite = Config.Target.DrawSprite,
-		options = {
-			icon = Config.Target.Icon,
-			label = Locales.OpenShop.Target,
-			onSelect = function()
-				OpenShop(shopId)
-			end,
-			distance = Config.InteractionDistance.Target,
-			canInteract = function()
-				return not IsPedInAnyVehicle(cache.ped, false)
-			end,
-		},
-	})
-end
+LocalPlayer.state.inShop = false
+LocalPlayer.state.currentShop = nil
 
 --[[ INITIALIZATION ]]
 
-for shopId, shopData in pairs(Config.Shops) do
-	for _, shopPos in ipairs(shopData.Locations) do
-		CreateBlips(shopPos, shopData.Blip)
-		CreatePoints(shopId, shopData, shopPos)
-		if Config.Target.Enabled then CreateTargets(shopId, shopPos) end
+local function GetInteractDistance(data)
+	if data.Interaction.HelpText.Enabled then
+		return data.Interaction.HelpText.Distance
+	elseif data.Interaction.FloatingText.Enabled then
+		return data.Interaction.FloatingText.Distance
+	end
+	return nil
+end
+
+local function CreatePoints(location, data, coords)
+	local shopPoint = lib.points.new({
+		coords = coords,
+		distance = data.PointRadius,
+		interactDistance = GetInteractDistance(data),
+		ped = nil,
+	})
+
+	function shopPoint:onEnter()
+		if data.Indicator.Ped.Enabled then self.ped = ShopPeds.Spawn(data, self.coords) end
+	end
+	function shopPoint:onExit()
+		if data.Indicator.Ped.Enabled then ShopPeds.Delete(self.ped) end
+	end
+
+	function shopPoint:nearby()
+		if not LocalPlayer.state.inShop then
+			if data.Indicator.Marker.Enabled then
+				local markerConfig = data.Indicator.Marker
+				---@diagnostic disable-next-line: missing-parameter
+				DrawMarker(markerConfig.Type, self.coords.x, self.coords.y, self.coords.z, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, markerConfig.Size.x, markerConfig.Size.y, markerConfig.Size.z, markerConfig.Color[1], markerConfig.Color[2], markerConfig.Color[3], markerConfig.Color[4], markerConfig.BobUpAndDown, markerConfig.FaceCamera, 2, markerConfig.Rotate)
+			end
+		end
+
+		if data.Interaction.HelpText.Enabled or data.Interaction.FloatingText.Enabled then
+			if self.isClosest and self.currentDistance <= self.interactDistance then
+				if IsPlayerDead(cache.playerId) or IsPedInAnyVehicle(cache.ped, false) then return end
+
+				if not LocalPlayer.state.inShop then
+					if data.Interaction.HelpText.Enabled then Functions.Interact.HelpText(Locales.Interaction.HelpText) end
+					if data.Interaction.FloatingText.Enabled then Functions.Interact.FloatingHelpText(self.ped, self.coords, Locales.Interaction.FloatingText) end
+				end
+
+				if IsControlJustReleased(0, data.Interaction.OpenKey) then Interaction.Open(location, data) end
+			end
+		end
 	end
 end
 
--- [[ NUI LOGIC ]]
+for location, data in pairs(Config.Shops) do
+	for i = 1, #data.Locations do
+		local coords = data.Locations[i]
 
-local function HandleTransaction(transactionType, cartArray)
-	local success, reason = lib.callback.await("cloud-shop:server:ProcessTransaction", false, transactionType, cartArray)
-	Print.Debug("[BuyLicenseDialog]", reason)
-
-	local sound = success and "ROBBERY_MONEY_TOTAL" or "CHECKPOINT_MISSED"
-	local soundSet = success and "HUD_FRONTEND_CUSTOM_SOUNDSET" or "HUD_MINI_GAME_SOUNDSET"
-	PlaySoundFrontend(-1, sound, soundSet, true)
-
-	return success
+		if data.Blip.Enabled then CreateBlip(coords, data.Blip) end
+		CreatePoints(location, data, coords)
+		if data.Interaction.Target.Enabled then Functions.Interact.AddTarget(location, data, coords) end
+	end
 end
 
+--[[ NUI CALLBACK ]]
+
 RegisterNuiCallback("shop:fetchData", function(data, cb)
-	local label = data.label
-	if not label then return end
+	if not type(data.label) == "string" then return end
+
+	local locationData = Config.Shops[LocalPlayer.state.currentShop]
 
 	local actions = {
 		closeShop = function()
-			local success = pcall(CloseShopUI)
+			local success = pcall(Interaction.Close)
 			cb(success)
 		end,
 		payCart = function()
@@ -275,40 +94,42 @@ RegisterNuiCallback("shop:fetchData", function(data, cb)
 			if success then ApplySpeechToPed("Generic_Thanks", "Speech_Params_Force_Shouted_Critical") end
 			cb(success)
 		end,
+
 		getCategories = function()
-			cb({ categories = currentShop.Categories })
+			cb({ categories = locationData.Categories })
 		end,
 		getItems = function()
-			cb({ items = currentShop.Items })
+			cb({ items = locationData.Items })
 		end,
 		getLocales = function()
-			Locales.UI.mainHeader = currentShop.Locales
+			Locales.UI.mainHeader = locationData.Locales
 			cb({ imagePath = Config.ImagePath, locales = Locales.UI })
 		end,
 	}
 
-	local action = actions[label]
+	local action = actions[data.label]
 	if action then action() end
 end)
 
--- [[ EVENT HANDLERS ]]
+-- [[ CLEAN UP ]]
 
-AddEventHandler("onResourceStop", function(resourceName)
-	if GetCurrentResourceName() ~= resourceName then return end
-	if inShop then
-		TriggerScreenblurFadeOut(0)
-		CloseShopUI()
-	end
-	DeletePeds()
+local function CleanUp()
+	Interaction.CloseUI()
+	ShopPeds.DeleteAll()
+end
+
+AddEventHandler("onResourceStop", function(resource)
+	if resource ~= cache.resource then return end
+	CleanUp()
 end)
 
 AddEventHandler("gameEventTriggered", function(event, data)
 	if event ~= "CEventNetworkEntityDamage" then return end
-	local player, playerDead = data[1], data[4]
-	if not IsPedAPlayer(player) then return end
+	if not LocalPlayer.state.inShop then return end
+
+	local playerId, playerDead = data[1], data[4]
+	if not IsPedAPlayer(playerId) then return end
+
 	local currentPlayer = cache.playerId
-	if playerDead and NetworkGetPlayerIndexFromPed(player) == currentPlayer and IsPlayerDead(cache.playerId) then
-		if inShop then CloseShopUI() end
-		TriggerScreenblurFadeOut(0)
-	end
+	if playerDead and NetworkGetPlayerIndexFromPed(playerId) == currentPlayer and IsPlayerDead(currentPlayer) then Interaction.CloseUI() end
 end)

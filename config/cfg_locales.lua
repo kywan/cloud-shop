@@ -15,17 +15,22 @@ return {
 		},
 		currencySymbol = "$",
 	},
+
+	Interaction = {
+		HelpText = "~INPUT_CONTEXT~  View Product Catalog", --? Button Reference: https://docs.fivem.net/docs/game-references/controls/
+		FloatingText = "~INPUT_CONTEXT~ View Product Catalog", --? Button Reference: https://docs.fivem.net/docs/game-references/controls/
+		Target = {
+			Icon = "fa-solid fa-warehouse",
+			Label = "View Product Catalog",
+		},
 	},
-	License = {
-		LicenseRequired = "A **%s** is required to access this shop!",
-		DialogHeader = "A **%s** is required to access this shop!",
-		DialogContent = "Would you like to purchase a **%s** for **$%s**?",
-		NoMoney = "You don't have enough money to buy the **%s**.",
-		PurchaseSuccess = "Successfully purchased a **%s** for **$%s**.",
+
+	Dialog = {
+		License = {
+			Header = "A **%s** is required to access this shop!",
+			Content = "Would you like to purchase a **%s** for **$%s**?",
+		},
 	},
-	OpenShop = {
-		TextUI = "~INPUT_CONTEXT~  View Product Catalog",
-		Target = "View Product Catalog",
 
 	Notify = {
 		Require = {
