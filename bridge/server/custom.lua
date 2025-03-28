@@ -6,8 +6,6 @@ local Locales = require("config.cfg_locales")
 
 if not DetectFramework("custom", "your_framework") then return end
 
-local inShop = {}
-
 --- Retrieves the Player ID for the given source
 ---@param source number -- Player's source ID
 ---@return number -- The Player ID
@@ -202,7 +200,4 @@ end)
 lib.callback.register("cloud-shop:server:ProcessTransaction", function(source, type, cartArray)
 	local success, reason = ProcessTransaction(source, type, cartArray)
 	return success, reason
-end)
-lib.callback.register("cloud-shop:server:InShop", function(source, status)
-	inShop[source] = status
 end)

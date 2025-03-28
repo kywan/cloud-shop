@@ -6,8 +6,6 @@ if not DetectFramework("qbcore", "qb-core") or DetectFramework("qbox", "qbx_core
 
 local QBCore = exports["qb-core"]:GetCoreObject()
 
-local inShop = {}
-
 local function GetPlayerId(source)
 	if not source or source == 0 then return nil end
 	return QBCore.Functions.GetPlayer(source)
@@ -164,7 +162,4 @@ end)
 lib.callback.register("cloud-shop:server:ProcessTransaction", function(source, type, cartArray)
 	local success, reason = ProcessTransaction(source, type, cartArray)
 	return success, reason
-end)
-lib.callback.register("cloud-shop:server:InShop", function(source, status)
-	inShop[source] = status
 end)

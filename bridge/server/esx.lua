@@ -6,8 +6,6 @@ if not DetectFramework("esx", "es_extended") then return end
 
 local ESX = exports["es_extended"]:getSharedObject()
 
-local inShop = {}
-
 local function GetPlayerId(source)
 	if not source or source == 0 then return nil end
 	return ESX.GetPlayerFromId(source)
@@ -170,11 +168,4 @@ lib.callback.register("cloud-shop:server:HasLicense", HasLicense)
 lib.callback.register("cloud-shop:server:BuyLicense", function(source, shopData)
 	local success, reason = BuyLicense(source, shopData)
 	return success, reason
-end)
-lib.callback.register("cloud-shop:server:ProcessTransaction", function(source, type, cartArray)
-	local success, reason = ProcessTransaction(source, type, cartArray)
-	return success, reason
-end)
-lib.callback.register("cloud-shop:server:InShop", function(source, status)
-	inShop[source] = status
 end)
