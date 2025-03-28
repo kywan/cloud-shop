@@ -61,38 +61,57 @@ const validateQuantityInput = (index: number, event?: KeyboardEvent): void => {
     <Icon icon="mdi:shopping-basket-off" />
   </div>
   <section class="item-list">
-    <div v-for="(item, index) in shopStore.cart" :key="item.name" class="item">
-      <div class="front">
-        <img :src="getImageSrc(item.name)" draggable="false" />
-        <div class="text-container">
-          <p class="item-label">{{ item.label }}</p>
-          <span class="item-price">{{ formatPrice(item.price) }}</span>
-        </div>
-        <div class="button-container">
-          <div class="decrement" @click="decrementQuantity(index)">
-            <Icon class="icon" icon="typcn:minus" />
+    <transition-group name="item-move">
+      <div v-for="(item, index) in shopStore.cart" :key="item.name" class="item">
+        <div class="front">
+          <img :src="getImageSrc(item.name)" draggable="false" />
+          <div class="text-container">
+            <p class="item-label">{{ item.label }}</p>
+            <span class="item-price">{{ formatPrice(item.price) }}</span>
           </div>
-          <input
-            class="counter"
-            type="text"
-            minlength="1"
-            maxlength="3"
-            :placeholder="String(item.quantity)"
-            v-model.number="item.quantity"
-            @keydown="validateNumberInput"
-            @blur="validateQuantityInput(index)"
-            @keyup.enter="validateQuantityInput(index, $event)"
-          />
-          <div class="increment" @click="incrementQuantity(index)">
-            <Icon class="icon" icon="typcn:plus" />
+          <div class="button-container">
+            <div class="decrement" @click="decrementQuantity(index)">
+              <Icon class="icon" icon="typcn:minus" />
+            </div>
+            <input
+              class="counter"
+              type="text"
+              minlength="1"
+              maxlength="3"
+              :placeholder="String(item.quantity)"
+              v-model.number="item.quantity"
+              @keydown="validateNumberInput"
+              @blur="validateQuantityInput(index)"
+              @keyup.enter="validateQuantityInput(index, $event)"
+            />
+            <div class="increment" @click="incrementQuantity(index)">
+              <Icon class="icon" icon="typcn:plus" />
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </transition-group>
   </section>
 </template>
 
 <style lang="scss">
+.item-move {
+  &-enter-active {
+    transition:
+      transform 0.4s ease,
+      opacity 0.4s ease;
+    will-change: transform, opacity;
+  }
+  &-enter-from {
+    transform: translate3d(0, 25%, 0);
+    opacity: 0;
+  }
+  &-enter-to {
+    transform: translate3d(0, 0, 0);
+    opacity: 1;
+  }
+}
+
 .no-cart {
   position: absolute;
   display: flex;
