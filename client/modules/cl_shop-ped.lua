@@ -1,8 +1,8 @@
 local peds = {}
 
-local function SpawnPed(data, coords)
-	local pedConfig = data.Indicator.Ped
-	local pedPos = coords
+local function SpawnPed(shopData, shopCoords)
+	local pedConfig = shopData.Indicator.Ped
+	local pedPos = shopCoords
 	local pedModel = pedConfig.Model
 	local pedScenario = pedConfig.Scenario
 
