@@ -11,7 +11,6 @@ return {
 	--[[ INVENTORY CONFIGURATION ]]
 
 	Inventory = {
-		OxInventory = true, -- Uses ox_inventory exports if true
 		WeaponAsItem = true, -- Treat weapons as items (only for supported inventories)
 	},
 

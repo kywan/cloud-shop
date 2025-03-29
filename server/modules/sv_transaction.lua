@@ -4,7 +4,7 @@ local Functions = require("config.cfg_functions")
 local Locales = require("config.cfg_locales")
 
 local function IsItemAWeapon(itemName)
-	return itemName:sub(1, 7):lower() == "weapon_" and not Config.Inventory.WeaponAsItem and not Config.Inventory.OxInventory
+	return itemName:sub(1, 7):lower() == "weapon_" and not Config.Inventory.WeaponAsItem and not GetResourceState("ox_inventory") == "started"
 end
 
 local function ProcessTransaction(source, type, cartArray)

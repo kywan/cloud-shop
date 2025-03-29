@@ -47,7 +47,7 @@ end
 ---@param itemQuantity number
 ---@return boolean
 function CanAddItem(source, itemName, itemQuantity)
-	if Config.Inventory.OxInventory then
+	if GetResourceState("ox_inventory") == "started" then
 		return exports.ox_inventory:CanCarryItem(source, itemName, itemQuantity)
 	else
 		local Player = GetPlayerObject(source)
@@ -63,7 +63,7 @@ end
 ---@param itemQuantity number
 ---@return boolean
 function AddItem(source, itemName, itemQuantity)
-	if Config.Inventory.OxInventory then
+	if GetResourceState("ox_inventory") == "started" then
 		return exports.ox_inventory:AddItem(source, itemName, itemQuantity)
 	else
 		local Player = GetPlayerObject(source)
