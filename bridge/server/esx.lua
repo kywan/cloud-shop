@@ -1,5 +1,3 @@
-local Config = require("config.cfg_main")
-
 if not DetectFramework("esx", "es_extended") then return end
 
 local ESX = exports["es_extended"]:getSharedObject()

@@ -1,7 +1,3 @@
----@diagnostic disable: undefined-field
-
-local Config = require("config.cfg_main")
-
 if not DetectFramework("custom", "your_framework") then return end
 
 --- Returns the player object from the given source.

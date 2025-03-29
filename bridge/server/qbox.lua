@@ -1,5 +1,3 @@
-local Config = require("config.cfg_main")
-
 if not DetectFramework("qbox", "qbx_core") then return end
 
 --- Returns the player object from the given source.

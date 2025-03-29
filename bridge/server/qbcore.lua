@@ -1,7 +1,6 @@
-local Config = require("config.cfg_main")
-local DoesExportExist = require("shared.utils.sh_export-check")
-
 if not DetectFramework("qbcore", "qb-core") or DetectFramework("qbox", "qbx_core") then return end
+
+local DoesExportExist = require("shared.utils.sh_export-check")
 
 local QBCore = exports["qb-core"]:GetCoreObject()
 
