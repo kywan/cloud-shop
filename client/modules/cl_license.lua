@@ -2,13 +2,12 @@
 local Locales = require("config.cfg_locales")
 
 local function LicenseDialog(shopData)
-	local licenseType = shopData.License.Type
 	local licenseLabel = shopData.License.Label
 	local licensePrice = shopData.License.Price
 
 	local licenseDialog = lib.alertDialog({
-		header = Locales.Dialog.License.Header:format(shopData.License.Label),
-		content = Locales.Dialog.License.Content:format(shopData.License.Label, shopData.License.Price),
+		header = Locales.Dialog.License.Header:format(licenseLabel),
+		content = Locales.Dialog.License.Content:format(licenseLabel, licensePrice),
 		centered = true,
 		cancel = true,
 		size = "sm",
