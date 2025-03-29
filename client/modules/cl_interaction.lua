@@ -23,8 +23,8 @@ local function OpenShop(shopKey, shopData)
 
 	Print.Verbose("[OpenShop]", json.encode({ "Categories:", shopData.Categories, "Items:", shopData.Items }))
 
-	if shopData.License.Required then
-		local hasLicense = lib.callback.await("cloud-shop:server:HasLicense", false, shopData.License.Type)
+	if shopData.Requirement.License.Required then
+		local hasLicense = lib.callback.await("cloud-shop:server:HasLicense", false, shopData.Requirement.License.Type)
 		if not hasLicense then
 			HandleLicense(shopData)
 			return

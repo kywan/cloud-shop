@@ -7,9 +7,9 @@ local function BuyLicense(source, shopData)
 	if not shopData then return false, "Invalid shop data" end
 	if not inShop[source] then return false, "Not in shop state" end
 
-	local licenseType = shopData.License.Type
-	local licenseLabel = shopData.License.Label
-	local licensePrice = shopData.License.Price
+	local licenseType = shopData.Requirement.License.Type
+	local licenseLabel = shopData.Requirement.License.Label
+	local licensePrice = shopData.Requirement.License.Price
 
 	local cashAvailable = GetMoney(source, "cash")
 	local bankAvailable = GetMoney(source, "bank")

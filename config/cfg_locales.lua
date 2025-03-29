@@ -33,7 +33,7 @@ return {
 	},
 
 	Notify = {
-		Require = {
+		Requirement = {
 			License = { title = "Access Requirement", description = "A **%s** is required to access this shop!", type = "warning" },
 		},
 		CantCarry = {

@@ -81,13 +81,14 @@ return {
 				{ name = "medikit", label = "Medikit", category = "healing", price = 200 },
 			},
 
-			License = {
-				Required = false, -- Whether a license is required to access the shop
-				BuyDialog = true, -- Displays a dialog prompting the player to purchase the required license
-
-				Label = "Weapon License", -- The display name of the required license
-				Type = "weapon", -- The type of the required license (e.g., "weapon")
-				Price = 1000, -- The cost of the license
+			Requirement = {
+				License = {
+					Required = false, -- Whether a license is required to access the shop
+					BuyDialog = true, -- Displays a dialog prompting the player to purchase the required license
+					Label = "Weapon License", -- The display name of the required license
+					Type = "weapon", -- The type of the required license (e.g., "weapon")
+					Price = 1000, -- The cost of the license
+				},
 			},
 
 			Locales = {

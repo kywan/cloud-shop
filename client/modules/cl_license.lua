@@ -2,8 +2,8 @@
 local Locales = require("config.cfg_locales")
 
 local function LicenseDialog(shopData)
-	local licenseLabel = shopData.License.Label
-	local licensePrice = shopData.License.Price
+	local licenseLabel = shopData.Requirement.License.Label
+	local licensePrice = shopData.Requirement.License.Price
 
 	local licenseDialog = lib.alertDialog({
 		header = Locales.Dialog.License.Header:format(licenseLabel),
@@ -27,11 +27,11 @@ local function LicenseDialog(shopData)
 end
 
 local function HandleLicense(shopData)
-	if not shopData.License.BuyDialog then
+	if not shopData.Requirement.License.BuyDialog then
 		Functions.Notify.Client({
-			title = Locales.Notify.Require.License.title,
-			description = Locales.Notify.Require.License.description:format(shopData.License.Label),
-			type = Locales.Notify.Require.License.type,
+			title = Locales.Notify.Requirement.License.title,
+			description = Locales.Notify.Requirement.License.description:format(shopData.Requirement.License.Label),
+			type = Locales.Notify.Requirement.License.type,
 		})
 		return
 	end
