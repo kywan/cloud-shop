@@ -6,11 +6,11 @@ return {
 
 	Framework = "auto", -- Options: "esx", "qbox", "qbcore", "custom", or "auto" (auto-detects avaible options).
 	DebugMode = "dev", -- Debug options: "prod" (minimal logs), "dev" (detailed logs), false (disable logs)
-	ImagePath = "nui://ox_inventory/web/images/", -- Local folder: "img/items/"
 
 	--[[ INVENTORY CONFIGURATION ]]
 
 	Inventory = {
+		ImagePath = "nui://ox_inventory/web/images/", -- Local folder: "img/items/"
 		WeaponAsItem = true, -- Treat weapons as items (only for supported inventories)
 	},
 

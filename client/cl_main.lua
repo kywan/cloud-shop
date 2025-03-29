@@ -108,7 +108,7 @@ RegisterNuiCallback("shop:fetchData", function(data, cb)
 		end,
 		getLocales = function()
 			Locales.UI.mainHeader = locationData.Locales
-			cb({ imagePath = Config.ImagePath, locales = Locales.UI })
+			cb({ imagePath = Config.Inventory.ImagePath, locales = Locales.UI })
 		end,
 	}
 
