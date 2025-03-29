@@ -45,11 +45,11 @@ end
 ---@param itemName string
 ---@param itemQuantity number
 ---@return boolean
-function CanCarryItem(source, itemName, itemQuantity)
+function CanAddItem(source, itemName, itemQuantity)
 	if Config.Inventory.OxInventory then
 		return exports.ox_inventory:CanCarryItem(source, itemName, itemQuantity)
 	else
-		Print.Error("[CanCarryItem] QBox framework by default only supports ox-inventory")
+		Print.Error("[CanAddItem] QBox framework by default only supports ox-inventory")
 		return false
 	end
 end

@@ -48,13 +48,13 @@ end
 ---@param itemName string
 ---@param itemQuantity number
 ---@return boolean
-function CanCarryItem(source, itemName, itemQuantity)
+function CanAddItem(source, itemName, itemQuantity)
 	if Config.Inventory.OxInventory then
 		return exports.ox_inventory:CanCarryItem(source, itemName, itemQuantity)
 	else
 		if not DoesExportExist("qb-inventory", "CanAddItem") then
-			Print.Warn("[CanCarryItem] Could not find qb-inventory:CanAddItem export, assuming true")
-			Print.Info("[CanCarryItem] Update your qb-inventory version to 2.0.0 or higher to use this export")
+			Print.Warn("[CanAddItem] Could not find qb-inventory:CanAddItem export, assuming true")
+			Print.Info("[CanAddItem] Update your qb-inventory version to 2.0.0 or higher to use this export")
 			return true
 		end
 		return exports["qb-inventory"]:CanAddItem(source, itemName, itemQuantity)

@@ -35,7 +35,7 @@ local function ProcessTransaction(source, type, cartArray)
 					})
 				end
 			else
-				if CanCarryItem(source, item.name, item.quantity) then
+				if CanAddItem(source, item.name, item.quantity) then
 					RemoveMoney(source, accountType, totalItemPrice)
 					AddItem(source, item.name, item.quantity)
 					totalCartPrice = totalCartPrice + totalItemPrice
