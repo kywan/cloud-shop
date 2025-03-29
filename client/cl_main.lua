@@ -26,7 +26,7 @@ local function CreatePoints(shopKey, shopData, shopCoords)
 	})
 
 	function shopPoint:onEnter()
-		if shopData.Indicator.Ped.Enabled then self.ped = ShopPeds.Spawn(shopData, self.coords) end
+		if shopData.Indicator.Ped.Enabled then self.ped = ShopPeds.Spawn(shopData, shopCoords) end
 	end
 	function shopPoint:onExit()
 		if shopData.Indicator.Ped.Enabled then ShopPeds.Delete(self.ped) end
