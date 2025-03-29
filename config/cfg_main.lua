@@ -243,13 +243,14 @@ return {
 				{ name = "at_muzzle_bell", label = "Bell Muzzle", category = "attachments", price = 250 },
 			},
 
-			License = {
-				Required = true,
-				BuyDialog = true,
-
-				Label = "Weapon License",
-				Type = "weapon",
-				Price = 1000,
+			Requirement = {
+				License = {
+					Required = true, -- Whether a license is required to access the shop
+					BuyDialog = true, -- Displays a dialog prompting the player to purchase the required license
+					Label = "Weapon License", -- The display name of the required license
+					Type = "weapon", -- The type of the required license (e.g., "weapon")
+					Price = 1000, -- The cost of the license
+				},
 			},
 
 			Locales = {
