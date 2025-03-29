@@ -101,8 +101,8 @@ end
 function GetMoney(source, accountType)
 	accountType = accountType == "cash" and "money" or "bank"
 
-	local Player = GetPlayerObject(source)
-	if not Player then return nil end
+	local xPlayer = GetPlayerObject(source)
+	if not xPlayer then return nil end
 
 	return xPlayer.getAccount(accountType).money or 0
 end
@@ -114,8 +114,8 @@ end
 function RemoveMoney(source, accountType, amount)
 	accountType = accountType == "cash" and "money" or "bank"
 
-	local Player = GetPlayerObject(source)
-	if not Player then return end
+	local xPlayer = GetPlayerObject(source)
+	if not xPlayer then return end
 
 	return xPlayer.removeAccountMoney(accountType, amount)
 end
