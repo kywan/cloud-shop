@@ -1,4 +1,5 @@
 local Config = require("config.cfg_main")
+local DoesExportExist = require("shared.utils.sh_export-check")
 
 if not DetectFramework("qbcore", "qb-core") or DetectFramework("qbox", "qbx_core") then return end
 
@@ -51,6 +52,11 @@ function CanCarryItem(source, itemName, itemQuantity)
 	if Config.Inventory.OxInventory then
 		return exports.ox_inventory:CanCarryItem(source, itemName, itemQuantity)
 	else
+		if not DoesExportExist("qb-inventory", "CanAddItem") then
+			Print.Warn("[CanCarryItem] Could not find qb-inventory:CanAddItem export, assuming true")
+			Print.Info("[CanCarryItem] Update your qb-inventory version to 2.0.0 or higher to use this export")
+			return true
+		end
 		return exports["qb-inventory"]:CanAddItem(source, itemName, itemQuantity)
 	end
 end
