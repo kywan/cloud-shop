@@ -4,6 +4,9 @@ return {
 	Framework = "auto", -- Options: "esx", "qbox", "qbcore", "custom", or "auto" (auto-detects avaible options)
 	DebugMode = "prod", -- Debug options: "prod" (minimal logs), "dev" (detailed logs), false (disable logs)
 
+	UI = {
+		Sounds = true, -- Plays sounds when interacting with the shop interface
+	},
 
 	Inventory = {
 		ImagePath = "nui://ox_inventory/web/images/", -- Path to the item images --? Local folder: "img/items/"

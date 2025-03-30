@@ -11,6 +11,7 @@ local HandleTransaction = require("client.modules.cl_transaction")
 -- Utils
 local CreateBlip = require("client.utils.cl_create-blip")
 local GetInteractDistance = require("client.utils.cl_interact-dist")
+local PlayUiSound = require("client.utils.cl_play-sound")
 
 LocalPlayer.state.inShop = false
 LocalPlayer.state.currentShop = nil
@@ -80,15 +81,15 @@ RegisterNuiCallback("shop:fetchData", function(data, cb)
 		end,
 
 		selectCategory = function()
-			PlaySoundFrontend(-1, "SELECT", "HUD_FREEMODE_SOUNDSET", true)
+			PlayUiSound("SELECT", "HUD_FREEMODE_SOUNDSET")
 			cb(true)
 		end,
 		addToCart = function()
-			PlaySoundFrontend(-1, "Click", "DLC_HEIST_HACKING_SNAKE_SOUNDS", true)
+			PlayUiSound("Click", "DLC_HEIST_HACKING_SNAKE_SOUNDS")
 			cb(true)
 		end,
 		removeFromCart = function()
-			PlaySoundFrontend(-1, "Pin_Bad", "DLC_HEIST_BIOLAB_PREP_HACKING_SOUNDS", true)
+			PlayUiSound("Pin_Bad", "DLC_HEIST_BIOLAB_PREP_HACKING_SOUNDS")
 			cb(true)
 		end,
 

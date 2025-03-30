@@ -1,6 +1,9 @@
 -- Configuration
 local Locales = require("config.cfg_locales")
 
+-- Utils
+local PlayUiSound = require("client.utils.cl_play-sound")
+
 local function LicenseDialog(shopData)
 	local licenseLabel = shopData.Requirement.License.Label
 	local licensePrice = shopData.Requirement.License.Price
@@ -20,7 +23,7 @@ local function LicenseDialog(shopData)
 
 		local sound = success and "ROBBERY_MONEY_TOTAL" or "CHECKPOINT_MISSED"
 		local soundSet = success and "HUD_FRONTEND_CUSTOM_SOUNDSET" or "HUD_MINI_GAME_SOUNDSET"
-		PlaySoundFrontend(-1, sound, soundSet, true)
+		PlayUiSound(sound, soundSet)
 
 		lib.callback.await("cloud-shop:server:InShop", false, false)
 	end
