@@ -11,6 +11,10 @@ local function OpenShopUI()
 
 	SetNuiFocus(true, true)
 	SendNUIMessage({ action = "toggleShop", showShop = true })
+
+	while IsScreenblurFadeRunning() do
+		Wait(50)
+	end
 	TriggerScreenblurFadeIn(200)
 
 	LocalPlayer.state.inShop = true
@@ -33,6 +37,10 @@ end
 local function CloseShopUI()
 	SetNuiFocus(false, false)
 	SendNUIMessage({ action = "toggleShop", showShop = false })
+
+	while IsScreenblurFadeRunning() do
+		Wait(50)
+	end
 	TriggerScreenblurFadeOut(200)
 
 	Functions.ToggleHud(true)
