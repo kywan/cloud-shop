@@ -3,8 +3,8 @@ local Functions = require("config.cfg_functions")
 
 -- Modules
 local ShopPeds = require("client.modules.cl_shop-ped")
-local HandleLicense = require("client.modules.cl_license")
 local CheckJobRequirements = require("client.modules.cl_job")
+local CheckLicenseRequirements = require("client.modules.cl_license")
 
 local function OpenShopUI()
 	Functions.ToggleHud(false)
@@ -24,14 +24,9 @@ local function OpenShop(shopKey, shopData)
 
 	Print.Verbose("[OpenShop]", json.encode({ "Categories:", shopData.Categories, "Items:", shopData.Items }))
 
-	if shopData.Requirement.License.Required then
-		local hasLicense = lib.callback.await("cloud-shop:server:HasLicense", false, shopData.Requirement.License.Type)
-		if not hasLicense then
-			HandleLicense(shopData)
-			return
-		end
-	end
 	if shopData.Requirement.Job.Required and not CheckJobRequirements(shopData) then return end
+	if shopData.Requirement.License.Required and not CheckLicenseRequirements(shopData) then return end
+
 	OpenShopUI()
 end
 

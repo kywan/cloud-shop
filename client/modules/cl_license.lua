@@ -38,4 +38,13 @@ local function HandleLicense(shopData)
 	LicenseDialog(shopData)
 end
 
-return HandleLicense
+local function CheckLicenseRequirements(shopData)
+	local hasLicense = lib.callback.await("cloud-shop:server:HasLicense", false, shopData.Requirement.License.Type)
+	if not hasLicense then
+		HandleLicense(shopData)
+		return false
+	end
+	return true
+end
+
+return CheckLicenseRequirements
