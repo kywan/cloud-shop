@@ -1,39 +1,32 @@
-local Config = require("shared.sh_config")
-local Locales = require("shared.sh_locales")
-
-if Config.Framework ~= "esx" then return end
+if not DetectFramework("esx", "es_extended") then return end
 
 local ESX = exports["es_extended"]:getSharedObject()
 
-local inShop = {}
-
-local function GetPlayerId(source)
+--- Returns the player object from the given source.
+--- @param source number
+--- @return table|nil
+local function GetPlayerObject(source)
 	if not source or source == 0 then return nil end
 	return ESX.GetPlayerFromId(source)
 end
 
-local function CanCarryItem(source, itemName, itemQuantity)
-	if Config.OxInventory then
-		return exports.ox_inventory:CanCarryItem(source, itemName, itemQuantity)
-	else
-		local xPlayer = GetPlayerId(source)
-		if not xPlayer then return false end
+--- Returns the player's job data.
+--- @param source number
+--- @return string|nil -- The job name
+--- @return number|nil -- The job grade
+local function GetJobData(source)
+	local xPlayer = GetPlayerObject(source)
+	if not xPlayer then return nil end
 
-		return xPlayer.canCarryItem(itemName, itemQuantity)
-	end
+	local job = xPlayer.getJob()
+	return job.name, job.grade
 end
+lib.callback.register("cloud-shop:server:GetJobData", GetJobData)
 
-local function AddItem(source, itemName, itemQuantity)
-	if Config.OxInventory then
-		return exports.ox_inventory:AddItem(source, itemName, itemQuantity)
-	else
-		local xPlayer = GetPlayerId(source)
-		if not xPlayer then return false end
-
-		return xPlayer.addInventoryItem(itemName, itemQuantity)
-	end
-end
-
+--- Checks if the player has the specific license.
+---@param source number
+---@param licenseType string
+---@return boolean
 local function HasLicense(source, licenseType)
 	if not source or source == 0 then return false end
 	if not licenseType then return false end
@@ -46,109 +39,94 @@ local function HasLicense(source, licenseType)
 	local result = Citizen.Await(p)
 	return result
 end
-
-local function BuyLicense(source, shopData)
-	if not source or source == 0 then return false, "Invalid source" end
-	if not shopData or next(shopData) == nil then return false, "Invalid or empty shop data" end
-	if not inShop[source] then return false, "Not in shop state" end
-
-	local xPlayer = GetPlayerId(source)
-	if not xPlayer then return false, "Player not found" end
-
-	local licenseType = shopData.License.Type
-	local licenseTypeLabel = shopData.License.TypeLabel
-	local amount = shopData.License.Price
-
-	local moneyAvailable = xPlayer.getAccount("money").money
-	local bankAvailable = xPlayer.getAccount("bank").money
-
-	local accountType
-	if moneyAvailable >= amount then
-		accountType = "money"
-	elseif bankAvailable >= amount then
-		accountType = "bank"
-	else
-		ServerNotify(source, Locales.License.NoMoney:format(licenseTypeLabel), "error")
-		return false, "No money"
-	end
-
-	xPlayer.removeAccountMoney(accountType, amount)
-	TriggerEvent("esx_license:addLicense", source, licenseType)
-	ServerNotify(source, Locales.License.PurchaseSuccess:format(licenseTypeLabel, amount), "info")
-	return true, "Successfully bought license"
-end
-
-if not Config.WeaponAsItem and not Config.OxInventory then
-	function HasWeapon(source, weaponName)
-		local xPlayer = GetPlayerId(source)
-		if not xPlayer then return false end
-
-		return xPlayer.hasWeapon(weaponName)
-	end
-
-	function AddWeapon(source, weaponName)
-		local xPlayer = GetPlayerId(source)
-		if not xPlayer then return false end
-
-		return xPlayer.addWeapon(weaponName, 120)
-	end
-end
-
-local function ProcessTransaction(source, type, cartArray)
-	if not source or source == 0 then return false, "Invalid source" end
-	if not cartArray or #cartArray == 0 then return false, "Invalid or empty cart array" end
-	if not inShop[source] then return false, "Not in shop state" end
-
-	local xPlayer = GetPlayerId(source)
-	if not xPlayer then return false, "Player not found" end
-
-	local accountType = type == "bank" and "bank" or "money"
-	local totalCartPrice = 0
-
-	for _, item in ipairs(cartArray) do
-		local availableMoney = xPlayer.getAccount(accountType).money or 0
-		local totalItemPrice = (item.price * item.quantity) or 0
-
-		if availableMoney >= totalItemPrice then
-			local isWeapon = item.name:sub(1, 7):lower() == "weapon_"
-			if isWeapon and not Config.WeaponAsItem and not Config.OxInventory then
-				if not HasWeapon(source, item.name) then
-					xPlayer.removeAccountMoney(accountType, totalItemPrice)
-					AddWeapon(source, item.name)
-					totalCartPrice = totalCartPrice + totalItemPrice
-				else
-					ServerNotify(source, Locales.Notification.HasWeapon:format(item.label), "error")
-				end
-			else
-				if CanCarryItem(source, item.name, item.quantity) then
-					xPlayer.removeAccountMoney(accountType, totalItemPrice)
-					AddItem(source, item.name, item.quantity)
-					totalCartPrice = totalCartPrice + totalItemPrice
-				else
-					ServerNotify(source, Locales.Notification.CantCarry:format(item.label), "error")
-				end
-			end
-		else
-			ServerNotify(source, Locales.Notification.NoMoney:format(item.label), "error")
-		end
-	end
-
-	if totalCartPrice > 0 then
-		ServerNotify(source, Locales.Notification.PurchaseSuccess:format(totalCartPrice), "success")
-		return true, ("Purchased item(s) for $%s"):format(totalCartPrice)
-	end
-	return false, "No items purchased"
-end
-
 lib.callback.register("cloud-shop:server:HasLicense", HasLicense)
-lib.callback.register("cloud-shop:server:BuyLicense", function(source, shopData)
-	local success, reason = BuyLicense(source, shopData)
-	return success, reason
-end)
-lib.callback.register("cloud-shop:server:ProcessTransaction", function(source, type, cartArray)
-	local success, reason = ProcessTransaction(source, type, cartArray)
-	return success, reason
-end)
-lib.callback.register("cloud-shop:server:InShop", function(source, status)
-	inShop[source] = status
-end)
+
+--- Adds a license to the player
+---@param source number
+---@param licenseType string
+function AddLicense(source, licenseType)
+	if not source or source == 0 then return end
+	if not licenseType then return end
+
+	TriggerEvent("esx_license:addLicense", source, licenseType)
+end
+
+--- Checks if the player can carry the specified item and quantity.
+---@param source number
+---@param itemName string
+---@param itemQuantity number
+---@return boolean
+function CanAddItem(source, itemName, itemQuantity)
+	if GetResourceState("ox_inventory") == "started" then
+		return exports.ox_inventory:CanCarryItem(source, itemName, itemQuantity)
+	else
+		local xPlayer = GetPlayerObject(source)
+		if not xPlayer then return false end
+
+		return xPlayer.canCarryItem(itemName, itemQuantity)
+	end
+end
+
+--- Adds an item to the player's inventory.
+---@param source number
+---@param itemName string
+---@param itemQuantity number
+---@return boolean
+function AddItem(source, itemName, itemQuantity)
+	if GetResourceState("ox_inventory") == "started" then
+		return exports.ox_inventory:AddItem(source, itemName, itemQuantity)
+	else
+		local xPlayer = GetPlayerObject(source)
+		if not xPlayer then return false end
+
+		return xPlayer.addInventoryItem(itemName, itemQuantity)
+	end
+end
+
+--- Checks if the player already has the specified weapon.
+---@param source number
+---@param weaponName string
+---@return boolean
+function HasWeapon(source, weaponName)
+	local xPlayer = GetPlayerObject(source)
+	if not xPlayer then return false end
+
+	return xPlayer.hasWeapon(weaponName)
+end
+
+--- Adds a weapon to the player.
+---@param source number
+---@param weaponName string
+---@return boolean
+function AddWeapon(source, weaponName)
+	local xPlayer = GetPlayerObject(source)
+	if not xPlayer then return false end
+
+	return xPlayer.addWeapon(weaponName, 120)
+end
+
+--- Gets the player's money balance for the specified account type
+---@param source number
+---@param accountType string <"cash"|"bank">
+---@return number|nil
+function GetMoney(source, accountType)
+	accountType = accountType == "cash" and "money" or "bank"
+
+	local xPlayer = GetPlayerObject(source)
+	if not xPlayer then return nil end
+
+	return xPlayer.getAccount(accountType).money or 0
+end
+
+--- Removes money from the player's specified account
+---@param source number
+---@param accountType string <"cash"|"bank">
+---@param amount number
+function RemoveMoney(source, accountType, amount)
+	accountType = accountType == "cash" and "money" or "bank"
+
+	local xPlayer = GetPlayerObject(source)
+	if not xPlayer then return end
+
+	return xPlayer.removeAccountMoney(accountType, amount)
+end

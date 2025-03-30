@@ -12,7 +12,7 @@ import ItemList from "./ItemList.vue"
 <template>
   <main class="shop__left">
     <section class="shop__left-top">
-      <MainHeader :locales="shopStore.locales.mainHeader" :position="'left'" />
+      <MainHeader :locales="shopStore.locales.main.header" :position="'left'" />
       <CategoryList />
     </section>
     <ItemList />

@@ -36,25 +36,30 @@ export const useShopStore = defineStore("shop", () => {
   const cart = reactive<CartItem[]>([])
 
   const locales = reactive<Locales>({
-    mainHeader: {
-      title: "market",
-      tag: "24/7",
-      description: "Welcome to your local market, where we're always here for you, day or night!\nExplore a curated selection of premium goods, tailored to meet your every need.",
+    currency: "$",
+    main: {
+      header: {
+        title: "Market",
+        tag: "24/7",
+        description:
+          "Welcome to your local market, where we're always here for you, day or night!\nExplore a curated selection of premium goods, tailored to meet your every need.",
+      },
+      item: {
+        addCart: "Add To Cart",
+      },
     },
-    cartHeader: {
-      title: "shopping",
-      tag: "cart",
-      description: "Review your chosen items and proceed to secure, easy checkout with multiple payment options.",
+    cart: {
+      header: {
+        title: "Shopping",
+        tag: "Cart",
+        description: "Review your chosen items and proceed to secure, easy checkout with multiple payment options.",
+      },
+      payment: {
+        title: "Payment",
+        payBank: "Bank",
+        payCash: "Cash",
+      },
     },
-    buttons: {
-      addCart: "Add To Cart",
-      payBank: "Bank",
-      payCash: "Cash",
-    },
-    item: {
-      paymentTitle: "Payment",
-    },
-    currencySymbol: "$",
   })
 
   return {

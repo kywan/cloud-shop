@@ -12,7 +12,7 @@ import CartPayment from "./CartPayment.vue"
 <template>
   <main class="shop__right">
     <section class="shop__right-cart">
-      <MainHeader :locales="shopStore.locales.cartHeader" :position="'right'" />
+      <MainHeader :locales="shopStore.locales.cart.header" :position="'right'" />
       <CartItems />
       <CartPayment />
     </section>

@@ -37,11 +37,11 @@ const clearCart = (): void => {
 
 <template>
   <section class="payment">
-    <p class="payment-title">{{ shopStore.locales.item.paymentTitle }}</p>
+    <p class="payment-title">{{ shopStore.locales.cart.payment.title }}</p>
     <span class="price">{{ formatPrice(totalPrice) }}</span>
     <div class="pay">
-      <button class="button" @click="payCart('bank')"><Icon icon="mingcute:bank-card-fill" /> {{ shopStore.locales.buttons.payBank }}</button>
-      <button class="button" @click="payCart('cash')"><Icon icon="mdi:wallet" /> {{ shopStore.locales.buttons.payCash }}</button>
+      <button class="button" @click="payCart('bank')"><Icon icon="mingcute:bank-card-fill" /> {{ shopStore.locales.cart.payment.payBank }}</button>
+      <button class="button" @click="payCart('cash')"><Icon icon="mdi:wallet" /> {{ shopStore.locales.cart.payment.payCash }}</button>
     </div>
   </section>
 </template>

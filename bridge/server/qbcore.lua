@@ -1,27 +1,91 @@
-local Config = require("shared.sh_config")
-local Locales = require("shared.sh_locales")
+if not DetectFramework("qbcore", "qb-core") or DetectFramework("qbox", "qbx_core") then return end
 
-if Config.Framework ~= "qbcore" then return end
+local DoesExportExist = require("shared.utils.sh_export-check")
 
 local QBCore = exports["qb-core"]:GetCoreObject()
 
-local inShop = {}
-
-local function GetPlayerId(source)
+--- Returns the player object from the given source.
+--- @param source number
+--- @return table|nil
+local function GetPlayerObject(source)
 	if not source or source == 0 then return nil end
 	return QBCore.Functions.GetPlayer(source)
 end
 
-local function CanCarryItem(source, itemName, itemQuantity)
-	if Config.OxInventory then
+--- Returns the player's job data.
+--- @param source number
+--- @return string|nil -- The job name
+--- @return number|nil -- The job grade
+local function GetJobData(source)
+	local Player = GetPlayerObject(source)
+	if not Player then return nil end
+
+	local job = Player.PlayerData.job or { name = "unknown", grade = { level = 0 } }
+	local gang = Player.PlayerData.gang or { name = "none", label = "unknown", grade = { level = 0 } }
+
+	-- If player has both gang and job, prioritize job info
+	if gang.name ~= "none" and job.name ~= "unemployed" then return job.name, job.grade.level end
+
+	-- Otherwise, use gang if exists, fallback to job
+	return gang.name ~= "none" and gang.label or job.name, gang.name ~= "none" and gang.grade.level or job.grade.level
+end
+lib.callback.register("cloud-shop:server:GetJobData", GetJobData)
+
+--- Checks if the player has the specific license.
+---@param source number
+---@param licenseType string
+---@return boolean
+local function HasLicense(source, licenseType)
+	if not source or source == 0 then return false end
+	if not licenseType then return false end
+
+	local Player = GetPlayerObject(source)
+	if not Player then return false end
+
+	return Player.PlayerData.metadata.licences[licenseType]
+end
+lib.callback.register("cloud-shop:server:HasLicense", HasLicense)
+
+--- Adds a license to the player
+---@param source number
+---@param licenseType string
+function AddLicense(source, licenseType)
+	if not source or source == 0 then return end
+	if not licenseType then return end
+
+	local Player = GetPlayerObject(source)
+	if not Player then return end
+
+	local licenseTable = Player.PlayerData.metadata.licences
+	licenseTable[licenseType] = true
+	Player.Functions.SetMetaData("licences", licenseTable)
+end
+
+--- Checks if the player can carry the specified item and quantity.
+---@param source number
+---@param itemName string
+---@param itemQuantity number
+---@return boolean
+function CanAddItem(source, itemName, itemQuantity)
+	if GetResourceState("ox_inventory") == "started" then
 		return exports.ox_inventory:CanCarryItem(source, itemName, itemQuantity)
 	else
+		if not DoesExportExist("qb-inventory", "CanAddItem") then
+			Print.Warn("[CanAddItem] Could not find qb-inventory:CanAddItem export, assuming true")
+			Print.Info("[CanAddItem] Update your qb-inventory version to 2.0.0 or higher to use this export")
+			return true
+		end
 		return exports["qb-inventory"]:CanAddItem(source, itemName, itemQuantity)
 	end
 end
 
-local function AddItem(source, itemName, itemQuantity)
-	if Config.OxInventory then
+--- Adds an item to the player's inventory.
+---@param source number
+---@param itemName string
+---@param itemQuantity number
+---@return boolean
+function AddItem(source, itemName, itemQuantity)
+	if GetResourceState("ox_inventory") == "started" then
 		return exports.ox_inventory:AddItem(source, itemName, itemQuantity)
 	else
 		local isWeapon = itemName:sub(1, 7):lower() == "weapon_"
@@ -30,115 +94,42 @@ local function AddItem(source, itemName, itemQuantity)
 	end
 end
 
-local function HasLicense(source, licenseType)
-	if not source or source == 0 then return false end
-	if not licenseType then return false end
-
-	local Player = GetPlayerId(source)
-	if not Player then return false end
-
-	return Player.PlayerData.metadata.licences[licenseType]
+--- Checks if the player already has the specified weapon.
+---@param source number
+---@param weaponName string
+---@return boolean
+function HasWeapon(source, weaponName)
+	-- Add your custom logic here
+	return false
 end
 
-local function BuyLicense(source, shopData)
-	if not source or source == 0 then return false, "Invalid source" end
-	if not shopData or next(shopData) == nil then return false, "Invalid or empty shop data" end
-	if not inShop[source] then return false, "Not in shop state" end
-
-	local Player = GetPlayerId(source)
-	if not Player then return false, "Player not found" end
-
-	local licenseType = shopData.License.Type
-	local amount = shopData.License.Price
-
-	local moneyAvailable = Player.Functions.GetMoney("cash")
-	local bankAvailable = Player.Functions.GetMoney("bank")
-
-	local accountType
-	if moneyAvailable >= amount then
-		accountType = "cash"
-	elseif bankAvailable >= amount then
-		accountType = "bank"
-	else
-		ServerNotify(source, Locales.License.NoMoney:format(licenseType), "error")
-		return false, "No money"
-	end
-
-	Player.Functions.RemoveMoney(accountType, amount)
-
-	local licenseTable = Player.PlayerData.metadata.licences
-	licenseTable[licenseType] = true
-	Player.Functions.SetMetaData("licences", licenseTable)
-
-	ServerNotify(source, Locales.License.PurchaseSuccess:format(licenseType, amount), "info")
-	return true, "Successfully bought license"
+--- Adds a weapon to the player.
+---@param source number
+---@param weaponName string
+---@return boolean
+function AddWeapon(source, weaponName)
+	-- Add your custom logic here
+	return true
 end
 
-if not Config.WeaponAsItem and not Config.OxInventory then
-	function HasWeapon(source, weaponName)
-		-- add your logic here
-	end
+--- Gets the player's money balance for the specified account type
+---@param source number
+---@param accountType string <"cash"|"bank">
+---@return number|nil
+function GetMoney(source, accountType)
+	local Player = GetPlayerObject(source)
+	if not Player then return nil end
 
-	function AddWeapon(source, weaponName)
-		-- add your logic here
-	end
+	return Player.Functions.GetMoney(accountType) or 0
 end
 
-local function ProcessTransaction(source, type, cartArray)
-	if not source or source == 0 then return false, "Invalid source" end
-	if not cartArray or #cartArray == 0 then return false, "Invalid or empty cart array" end
-	if not inShop[source] then return false, "Not in shop state" end
+--- Removes money from the player's specified account
+---@param source number
+---@param accountType string <"cash"|"bank">
+---@param amount number
+function RemoveMoney(source, accountType, amount)
+	local Player = GetPlayerObject(source)
+	if not Player then return end
 
-	local Player = GetPlayerId(source)
-	if not Player then return false, "Player not found" end
-
-	local accountType = type == "bank" and "bank" or "cash"
-	local totalCartPrice = 0
-
-	for _, item in ipairs(cartArray) do
-		local availableMoney = Player.Functions.GetMoney(accountType) or 0
-		local totalItemPrice = (item.price * item.quantity) or 0
-
-		if availableMoney >= totalItemPrice then
-			local isWeapon = item.name:sub(1, 7):lower() == "weapon_"
-			if isWeapon and not Config.WeaponAsItem and not Config.OxInventory then
-				if not HasWeapon(source, item.name) then
-					Player.Functions.RemoveMoney(accountType, totalItemPrice)
-					AddWeapon(source, item.name)
-					totalCartPrice = totalCartPrice + totalItemPrice
-				else
-					ServerNotify(source, Locales.Notification.HasWeapon:format(item.label), "error")
-				end
-			else
-				if CanCarryItem(source, item.name, item.quantity) then
-					Player.Functions.RemoveMoney(accountType, totalItemPrice)
-					AddItem(source, item.name, item.quantity)
-					totalCartPrice = totalCartPrice + totalItemPrice
-				else
-					ServerNotify(source, Locales.Notification.CantCarry:format(item.label), "error")
-				end
-			end
-		else
-			ServerNotify(source, Locales.Notification.NoMoney:format(item.label), "error")
-		end
-	end
-
-	if totalCartPrice > 0 then
-		ServerNotify(source, Locales.Notification.PurchaseSuccess:format(totalCartPrice), "success")
-		return true, ("Purchased item(s) for $%s"):format(totalCartPrice)
-	end
-	return false, "No items purchased"
+	return Player.Functions.RemoveMoney(accountType, amount)
 end
-
-lib.callback.register("cloud-shop:server:HasLicense", HasLicense)
-lib.callback.register("cloud-shop:server:BuyLicense", function(source, shopData)
-	local success, reason = BuyLicense(source, shopData)
-	return success, reason
-end)
-lib.callback.register("cloud-shop:server:ProcessTransaction", function(source, type, cartArray)
-	local success, reason = ProcessTransaction(source, type, cartArray)
-	return success, reason
-end)
-lib.callback.register("cloud-shop:server:InShop", function(source, status)
-	inShop[source] = status
-end)

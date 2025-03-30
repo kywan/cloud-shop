@@ -1,21 +1,25 @@
 export interface Locales {
-  mainHeader: {
-    title: string
-    tag: string
-    description: string
+  main: {
+    header: {
+      title: string
+      tag: string
+      description: string
+    }
+    item: {
+      addCart: string
+    }
   }
-  cartHeader: {
-    title: string
-    tag: string
-    description: string
+  cart: {
+    header: {
+      title: string
+      tag: string
+      description: string
+    }
+    payment: {
+      title: string
+      payBank: string
+      payCash: string
+    }
   }
-  buttons: {
-    addCart: string
-    payBank: string
-    payCash: string
-  }
-  item: {
-    paymentTitle: string
-  }
-  currencySymbol: string
+  currency: string
 }
