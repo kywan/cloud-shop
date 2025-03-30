@@ -1,3 +1,4 @@
+-- Configuration
 local Locales = require("config.cfg_locales")
 
 --- Toggles the HUD visibility.
@@ -62,21 +63,22 @@ local function FloatingHelpText(msg, entity, coords)
 end
 
 --- Creates a target zone for interacting with a shop.
---- @param location string The shop location key
---- @param data {Interaction: {Target: {BoxZoneSize: vector3, DrawSprite: boolean, Distance: number}}}
---- @param coords vector4 The coordinates for the target zone
-local function AddTarget(location, data, coords)
+--- @param shopKey string The shop location key
+--- @param shopData {Interaction: {Target: {BoxZoneSize: vector3, DrawSprite: boolean, Distance: number}}}
+--- @param shopCoords vector4 The coordinates for the target zone
+--- @param openFunction function The function to open the shop
+local function AddTarget(shopKey, shopData, shopCoords, openFunction)
 	exports.ox_target:addBoxZone({
-		coords = coords,
-		size = data.Interaction.Target.BoxZoneSize,
-		drawSprite = data.Interaction.Target.DrawSprite,
+		coords = shopCoords,
+		size = shopData.Interaction.Target.BoxZoneSize,
+		drawSprite = shopData.Interaction.Target.DrawSprite,
 		options = {
 			icon = Locales.Interaction.Target.Icon,
 			label = Locales.Interaction.Target.Label,
 			onSelect = function()
-				Interaction.OpenMenu(location)
+				openFunction(shopKey, shopData)
 			end,
-			distance = data.Interaction.Target.Distance,
+			distance = shopData.Interaction.Target.Distance,
 			canInteract = function()
 				return not IsPedInAnyVehicle(cache.ped, false)
 			end,

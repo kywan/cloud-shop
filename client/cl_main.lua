@@ -63,7 +63,7 @@ for shopKey, shopData in pairs(Config.Shops) do
 
 		if shopData.Blip.Enabled then CreateBlip(shopCoords, shopData.Blip) end
 		CreatePoints(shopKey, shopData, shopCoords)
-		if shopData.Interaction.Target.Enabled then Functions.Interact.AddTarget(shopKey, shopData, shopCoords) end
+		if shopData.Interaction.Target.Enabled then Functions.Interact.AddTarget(shopKey, shopData, shopCoords, Interaction.Open) end
 	end
 end
 

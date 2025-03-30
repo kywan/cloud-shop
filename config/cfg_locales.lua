@@ -17,10 +17,10 @@ return {
 	},
 
 	Interaction = {
-		HelpText = "~INPUT_CONTEXT~  View Product Catalog", --? Button Reference: https://docs.fivem.net/docs/game-references/controls/
-		FloatingText = "~INPUT_CONTEXT~ View Product Catalog", --? Button Reference: https://docs.fivem.net/docs/game-references/controls/
+		HelpText = "~INPUT_CONTEXT~  View Product Catalog", --? Button Reference: https://docs.fivem.net/docs/game-references/controls
+		FloatingText = "~INPUT_CONTEXT~ View Product Catalog", --? Button Reference: https://docs.fivem.net/docs/game-references/controls
 		Target = {
-			Icon = "fa-solid fa-warehouse",
+			Icon = "fa-solid fa-cart-shopping", --? Icon Reference: https://fontawesome.com/icons
 			Label = "View Product Catalog",
 		},
 	},
