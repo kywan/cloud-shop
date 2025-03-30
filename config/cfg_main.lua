@@ -94,7 +94,7 @@ return {
 				},
 			},
 
-			Locales = {
+			Locales = { --? More locales including the currency symbol, button text and more can be found in config/cfg_locales.lua
 				MainHeader = {
 					title = "Market",
 					tag = "24/7",
