@@ -95,9 +95,16 @@ return {
 			},
 
 			Locales = {
-				title = "market",
-				tag = "24/7",
-				description = "Welcome to your local market, where we're always here for you, day or night!\nExplore a curated selection of premium goods, tailored to meet your every need.",
+				MainHeader = {
+					title = "Market",
+					tag = "24/7",
+					description = "Welcome to your local market, where we're always here for you, day or night!\nExplore a curated selection of premium goods, tailored to meet your every need.",
+				},
+				CartHeader = {
+					title = "Shopping",
+					tag = "Cart",
+					description = "Review your chosen items and proceed to secure, easy checkout with multiple payment options.",
+				},
 			},
 
 			Blip = {
@@ -263,9 +270,16 @@ return {
 			},
 
 			Locales = {
-				title = "weapon shop",
-				tag = "24/7",
-				description = "Welcome to your local weapon shop, where we're always here for you, day or night!\nExplore a curated selection of premium goods, tailored to meet your every need.",
+				MainHeader = {
+					title = "Weapon Shop",
+					tag = "24/7",
+					description = "Welcome to your local weapon shop, where we're always here for you, day or night!\nExplore a curated selection of premium goods, tailored to meet your every need.",
+				},
+				CartHeader = {
+					title = "Shopping",
+					tag = "Cart",
+					description = "Review your chosen items and proceed to secure, easy checkout with multiple payment options.",
+				},
 			},
 
 			Blip = {

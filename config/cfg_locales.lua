@@ -1,19 +1,18 @@
 return {
 	UI = {
-		cartHeader = {
-			title = "shopping",
-			tag = "cart",
-			description = "Review your chosen items and proceed to secure, easy checkout with multiple payment options.",
+		currency = "$",
+		main = {
+			item = {
+				addCart = "Add To Cart",
+			},
 		},
-		buttons = {
-			addCart = "Add To Cart",
-			payBank = "Bank",
-			payCash = "Cash",
+		cart = {
+			payment = {
+				title = "Payment",
+				payBank = "Bank",
+				payCash = "Cash",
+			},
 		},
-		item = {
-			paymentTitle = "Payment",
-		},
-		currencySymbol = "$",
 	},
 
 	Interaction = {

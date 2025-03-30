@@ -57,7 +57,7 @@ onMounted(async () => {
             <p class="item-label">{{ item.label }}</p>
             <div class="item-price">{{ formatPrice(item.price) }}</div>
           </div>
-          <div class="add-to-cart" @click="addToCart(item.name)">{{ shopStore.locales.buttons.addCart }}</div>
+          <div class="add-to-cart" @click="addToCart(item.name)">{{ shopStore.locales.main.item.addCart }}</div>
         </div>
       </div>
     </div>

@@ -72,7 +72,7 @@ end
 RegisterNuiCallback("shop:fetchData", function(data, cb)
 	if not type(data.label) == "string" then return end
 
-	local locationData = Config.Shops[LocalPlayer.state.currentShop]
+	local shopData = Config.Shops[LocalPlayer.state.currentShop]
 
 	local actions = {
 		closeShop = function()
@@ -102,13 +102,14 @@ RegisterNuiCallback("shop:fetchData", function(data, cb)
 		end,
 
 		getCategories = function()
-			cb({ categories = locationData.Categories })
+			cb({ categories = shopData.Categories })
 		end,
 		getItems = function()
-			cb({ items = locationData.Items })
+			cb({ items = shopData.Items })
 		end,
 		getLocales = function()
-			Locales.UI.mainHeader = locationData.Locales
+			Locales.UI.main.header = shopData.Locales.MainHeader
+			Locales.UI.cart.header = shopData.Locales.CartHeader
 			cb({ imagePath = Config.Inventory.ImagePath, locales = Locales.UI })
 		end,
 	}
