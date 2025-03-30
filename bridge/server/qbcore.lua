@@ -12,6 +12,25 @@ local function GetPlayerObject(source)
 	return QBCore.Functions.GetPlayer(source)
 end
 
+--- Returns the player's job data.
+--- @param source number
+--- @return string|nil -- The job name
+--- @return number|nil -- The job grade
+local function GetJobData(source)
+	local Player = GetPlayerObject(source)
+	if not Player then return nil end
+
+	local job = Player.PlayerData.job or { name = "unknown", grade = { level = 0 } }
+	local gang = Player.PlayerData.gang or { name = "none", label = "unknown", grade = { level = 0 } }
+
+	-- If player has both gang and job, prioritize job info
+	if gang.name ~= "none" and job.name ~= "unemployed" then return job.name, job.grade.level end
+
+	-- Otherwise, use gang if exists, fallback to job
+	return gang.name ~= "none" and gang.label or job.name, gang.name ~= "none" and gang.grade.level or job.grade.level
+end
+lib.callback.register("cloud-shop:server:GetJobData", GetJobData)
+
 --- Checks if the player has the specific license.
 ---@param source number
 ---@param licenseType string

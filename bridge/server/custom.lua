@@ -9,6 +9,19 @@ local function GetPlayerObject(source)
 	return Your_Framework.GetPlayer(source) -- Example
 end
 
+--- Returns the player's job data.
+--- @param source number
+--- @return string|nil -- The job name
+--- @return number|nil -- The job grade
+local function GetJobData(source)
+	local Player = GetPlayerObject(source)
+	if not Player then return nil end
+
+	local job = Player.GetJobData() -- Example
+	return job.name, job.grade
+end
+lib.callback.register("cloud-shop:server:GetJobData", GetJobData)
+
 --- Checks if the player has the specific license.
 ---@param source number
 ---@param licenseType string

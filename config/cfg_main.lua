@@ -82,6 +82,12 @@ return {
 			},
 
 			Requirement = {
+				Job = {
+					Required = false, -- Whether a job is required to access the shop
+					Label = "Police", -- The display name of the required job
+					Name = "police", -- The name of the required job
+					Grade = 0, -- Minimum job grade required to access the shop
+				},
 				License = {
 					Required = false, -- Whether a license is required to access the shop
 					BuyDialog = true, -- Displays a dialog prompting the player to purchase the required license
@@ -244,6 +250,12 @@ return {
 			},
 
 			Requirement = {
+				Job = {
+					Required = false,
+					Label = "Police",
+					Name = "police",
+					Grade = 0,
+				},
 				License = {
 					Required = true, -- Whether a license is required to access the shop
 					BuyDialog = true, -- Displays a dialog prompting the player to purchase the required license

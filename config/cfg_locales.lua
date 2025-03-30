@@ -34,6 +34,8 @@ return {
 
 	Notify = {
 		Requirement = {
+			Job = { title = "Access Requirement", description = "The **%s** job is required to access this shop!", type = "warning" },
+			JobGrade = { title = "Access Requirement", description = "Your job grade doesn't meet the requirements to access this shop!.", type = "warning" },
 			License = { title = "Access Requirement", description = "A **%s** is required to access this shop!", type = "warning" },
 		},
 		CantCarry = {

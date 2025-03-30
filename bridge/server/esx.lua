@@ -10,6 +10,19 @@ local function GetPlayerObject(source)
 	return ESX.GetPlayerFromId(source)
 end
 
+--- Returns the player's job data.
+--- @param source number
+--- @return string|nil -- The job name
+--- @return number|nil -- The job grade
+local function GetJobData(source)
+	local xPlayer = GetPlayerObject(source)
+	if not xPlayer then return nil end
+
+	local job = xPlayer.getJob()
+	return job.name, job.grade
+end
+lib.callback.register("cloud-shop:server:GetJobData", GetJobData)
+
 --- Checks if the player has the specific license.
 ---@param source number
 ---@param licenseType string

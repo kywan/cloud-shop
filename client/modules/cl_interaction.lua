@@ -4,6 +4,7 @@ local Functions = require("config.cfg_functions")
 -- Modules
 local ShopPeds = require("client.modules.cl_shop-ped")
 local HandleLicense = require("client.modules.cl_license")
+local CheckJobRequirements = require("client.modules.cl_job")
 
 local function OpenShopUI()
 	Functions.ToggleHud(false)
@@ -30,6 +31,7 @@ local function OpenShop(shopKey, shopData)
 			return
 		end
 	end
+	if shopData.Requirement.Job.Required and not CheckJobRequirements(shopData) then return end
 	OpenShopUI()
 end
 
