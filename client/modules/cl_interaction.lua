@@ -18,7 +18,7 @@ local function OpenShopUI()
 	TriggerScreenblurFadeIn(200)
 
 	LocalPlayer.state.inShop = true
-	lib.callback.await("cloud-shop:server:InShop", false, true)
+	lib.callback.await("cloud-shop:server:InShop", false, true, LocalPlayer.state.currentShop)
 
 	ShopPeds.ApplySpeech("Generic_Hi", "Speech_Params_Force")
 end
@@ -46,7 +46,7 @@ local function CloseShopUI()
 	Functions.ToggleHud(true)
 
 	LocalPlayer.state.inShop = false
-	lib.callback.await("cloud-shop:server:InShop", false, false)
+	lib.callback.await("cloud-shop:server:InShop", false, false, nil)
 end
 local function CloseShop()
 	LocalPlayer.state.currentShop = nil
