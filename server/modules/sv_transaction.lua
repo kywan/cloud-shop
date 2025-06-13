@@ -49,7 +49,7 @@ local function ProcessTransaction(source, type, cartArray)
 			return false, "Invalid price for item: " .. item.name
 		end
 
-		-- Make sure the quantity is blocked from being over 100. (So cheaters can't just buy 1000+ items.)
+		-- Make sure the quantity is blocked from being over 100. (So cheaters can't just buy 1000+ items, or spawn themselves 99999999 money)
 		if item.quantity <= 0 or item.quantity > 100 then
 			return false, "Invalid quantity for item: " .. item.name
 		end
