@@ -15,8 +15,44 @@ local function ProcessTransaction(source, type, cartArray)
 	local accountType = type == "bank" and "bank" or "cash"
 	local totalCartPrice = 0
 
+	-- Checks if the player is actually in a shop.
+	local currentShop = inShop[source]
+	if not currentShop or not Config.Shops[currentShop] then
+		return false, "Invalid shop state."
+	end
+
+	-- Make sure the item being spawed is actually in the config/shop.
+	local shopItems = Config.Shops[currentShop].Items
+	if not shopItems then
+		return false, "Invalid shop configuration."
+	end
+
+	-- Table for valid items.
+	local validItems = {}
+	for _, item in ipairs(shopItems) do
+		validItems[item.name] = item
+	end
+
 	for i = 1, #cartArray do
 		local item = cartArray[i]
+
+		if not item.name or not item.price or not item.quantity then
+			return false, "Invalid item data."
+		end
+
+		if not validItems[item.name] then
+			return false, "Invalid item: " .. item.name
+		end
+
+		-- Blocks free items. Items shouldn't be free in shops to begin with?
+		if item.price <= 0 then
+			return false, "Invalid price for item: " .. item.name
+		end
+
+		-- Make sure the quantity is blocked from being over 100. (So cheaters can't just buy 1000+ items, or spawn themselves 99999999 money)
+		if item.quantity <= 0 or item.quantity > 100 then
+			return false, "Invalid quantity for item: " .. item.name
+		end
 
 		local availableMoney = GetMoney(source, accountType)
 		local totalItemPrice = (item.price * item.quantity) or 0
