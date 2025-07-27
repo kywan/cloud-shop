@@ -1,9 +1,10 @@
-import { useShopStore } from "@/stores/shop"
+import { useConfigStore } from "@/stores/config"
 
 export const formatPrice = (number: number): string => {
-  const shopStore = useShopStore()
-  if (typeof number !== "number") return `${number}`
+  const configStore = useConfigStore()
 
-  const currencySymbol = shopStore.locales.currency || "$"
+  if (typeof number !== "number") return String(number)
+
+  const currencySymbol = configStore.locales.currency || "$"
   return `${currencySymbol} ${number.toLocaleString("de-DE")}`
 }

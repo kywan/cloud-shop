@@ -9,7 +9,7 @@ return {
 	},
 
 	Inventory = {
-		ImagePath = "nui://ox_inventory/web/images/", -- Path to the item images --? Local folder: "img/items/"
+		ImagePath = "nui://ox_inventory/web/images/", -- Path to the item images --? Local folder: "item_images/"
 		WeaponAsItem = true, -- Treat weapons as items (only for supported inventories)
 	},
 
@@ -103,7 +103,7 @@ return {
 				CartHeader = {
 					title = "Shopping",
 					tag = "Cart",
-					description = "Review your chosen items and proceed to secure, easy checkout with multiple payment options.",
+					description = "Review your chosen items and proceed to secure, easy\ncheckout with multiple payment options.",
 				},
 			},
 
@@ -135,7 +135,7 @@ return {
 			Interaction = {
 				OpenKey = 38, -- Default: 38 (E key) --? Reference: https://docs.fivem.net/docs/game-references/controls
 
-				HelpText = {
+				helpText = {
 					Enabled = false, -- If true, displays floating help text near the interaction point
 					Distance = 2.5, -- Distance within which help text appears and is interactable
 				},
@@ -278,7 +278,7 @@ return {
 				CartHeader = {
 					title = "Shopping",
 					tag = "Cart",
-					description = "Review your chosen items and proceed to secure, easy checkout with multiple payment options.",
+					description = "Review your chosen items and proceed to secure, easy\ncheckout with multiple payment options.",
 				},
 			},
 
@@ -310,7 +310,7 @@ return {
 			Interaction = {
 				OpenKey = 38,
 
-				HelpText = {
+				helpText = {
 					Enabled = false,
 					Distance = 2.5,
 				},

@@ -1,16 +1,16 @@
 -- Configuration
 local Locales = require("config.cfg_locales")
 
---- Toggles the HUD visibility.
---- @param state boolean Whether to enable or disable the HUD
-local function ToggleHud(state)
+--- Toggles the HUD visibility
+--- @param state boolean -- Whether to enable or disable the HUD
+local function toggleHud(state)
 	DisplayHud(state)
 	DisplayRadar(state)
 end
 
---- Sends a notification to the client.
+--- Sends a notification to the client
 --- @param data {title: string, description: string, type: string}
-local function ClientNotify(data)
+local function clientNotify(data)
 	lib.notify({
 		title = data.title,
 		description = data.description,
@@ -22,10 +22,10 @@ local function ClientNotify(data)
 	})
 end
 
---- Sends a notification from the server to a specific client.
---- @param source number Player source ID
+--- Sends a notification from the server to a specific client
+--- @param source number -- Player source ID
 --- @param data {title: string, description: string, type: string}
-local function ServerNotify(source, data)
+local function serverNotify(source, data)
 	TriggerClientEvent("ox_lib:notify", source, {
 		title = data.title,
 		description = data.description,
@@ -37,21 +37,21 @@ local function ServerNotify(source, data)
 	})
 end
 
---- Displays a help text.
---- @param msg string The message to display
-local function HelpText(msg)
-	AddTextEntry("HelpText", msg)
-	DisplayHelpTextThisFrame("HelpText", false)
+--- Displays a help text
+--- @param msg string -- The message to display
+local function helpText(msg)
+	AddTextEntry("helpText", msg)
+	DisplayHelpTextThisFrame("helpText", false)
 end
 
---- Displays floating help text near an entity or specific coordinates.
---- @param msg string The message to display
---- @param entity? number The entity ID (optional)
---- @param coords? vector3 The coordinates (required if entity is nil)
-local function FloatingHelpText(msg, entity, coords)
-	AddTextEntry("FloatingHelpText", msg)
+--- Displays floating help text near an entity or specific coordinates
+--- @param msg string -- The message to display
+--- @param entity? number -- The entity ID (optional)
+--- @param coords? vector3 -- The coordinates (required if entity is nil)
+local function floatingHelpText(msg, entity, coords)
+	AddTextEntry("floatingHelpText", msg)
 	SetFloatingHelpTextStyle(1, 1, 2, -1, 3, 0)
-	BeginTextCommandDisplayHelp("FloatingHelpText")
+	BeginTextCommandDisplayHelp("floatingHelpText")
 	EndTextCommandDisplayHelp(2, false, false, -1)
 
 	if entity then
@@ -62,39 +62,39 @@ local function FloatingHelpText(msg, entity, coords)
 	end
 end
 
---- Creates a target zone for interacting with a shop.
---- @param shopKey string The shop location key
+--- Creates a target zone for interacting with a shop
+--- @param shopKey string -- The shop location key
 --- @param shopData {Interaction: {Target: {BoxZoneSize: vector3, DrawSprite: boolean, Distance: number}}}
---- @param shopCoords vector4 The coordinates for the target zone
---- @param openFunction function The function to open the shop
-local function AddTarget(shopKey, shopData, shopCoords, openFunction)
+--- @param shopCoords vector4 -- The coordinates for the target zone
+--- @param openFunction function -- The function to open the shop
+local function addTarget(shopKey, shopData, shopCoords, openFunction)
 	exports.ox_target:addBoxZone({
 		coords = shopCoords,
 		size = shopData.Interaction.Target.BoxZoneSize,
 		drawSprite = shopData.Interaction.Target.DrawSprite,
 		options = {
-			icon = Locales.Interaction.Target.Icon,
-			label = Locales.Interaction.Target.Label,
-			onSelect = function()
-				openFunction(shopKey, shopData)
-			end,
+			icon = Locales.interaction.target.icon,
+			label = Locales.interaction.target.label,
 			distance = shopData.Interaction.Target.Distance,
 			canInteract = function()
 				return not IsPedInAnyVehicle(cache.ped, false)
+			end,
+			onSelect = function()
+				openFunction(shopKey, shopData)
 			end,
 		},
 	})
 end
 
 return {
-	ToggleHud = ToggleHud,
-	Notify = {
-		Client = ClientNotify,
-		Server = ServerNotify,
+	toggleHud = toggleHud,
+	notify = {
+		client = clientNotify,
+		server = serverNotify,
 	},
-	Interact = {
-		HelpText = HelpText,
-		FloatingHelpText = FloatingHelpText,
-		AddTarget = AddTarget,
+	interact = {
+		helpText = helpText,
+		floatingHelpText = floatingHelpText,
+		addTarget = addTarget,
 	},
 }

@@ -1,103 +1,105 @@
 <script setup lang="ts">
 // External Libraries
-import { computed, onMounted, onUnmounted } from "vue"
+import { computed, onMounted, onBeforeUnmount } from "vue"
 
 // Stores
 import { useShopStore } from "@/stores/shop"
 const shopStore = useShopStore()
 
-// Composables
-import { useShopEvents } from "@/composables/useShopEvents"
-const { handleMessage } = useShopEvents()
+import { useConfigStore } from "@/stores/config"
+const configStore = useConfigStore()
 
-// Pages
-import LeftMain from "@/pages/LeftSection/LeftMain.vue"
-import RightMain from "@/pages/RightSection/RightMain.vue"
+// Composables
+import { useBridge } from "@/composables/useBridge"
+const { handleMessage } = useBridge()
 
 // Utils
-import { fetchData } from "@/utils/api"
+import { callback } from "@/utils/callback"
+import { DEV_MODE } from "@/utils/constants"
+
+// Components
+import MainHeader from "@/components/MainHeader.vue"
+import CategoryList from "@/components/CategoryList.vue"
+import ItemList from "@/components/ItemList.vue"
+import CartItems from "@/components/CartItems.vue"
+import CartPayment from "@/components/CartPayment.vue"
 
 const devStyles = computed(() => {
   return {
-    backgroundImage: `url(${new URL("@/assets/evening-bg.png", import.meta.url)})`,
+    backgroundImage: `url(${new URL("@/assets/img/evening-bg.png", import.meta.url)})`,
     backgroundSize: "cover",
     backgroundRepeat: "no-repeat",
   }
 })
 
+const closeShop = (): void => {
+  callback({ action: "closeShop" })
+}
+
 const handleKeyup = (event: KeyboardEvent): void => {
   if (event.key !== "Escape") return
   closeShop()
 }
-const closeShop = (): void => {
-  fetchData({ label: "closeShop" })
-}
 
-// Lifecycle Hooks
 onMounted(() => {
   window.addEventListener("message", handleMessage)
   window.addEventListener("keyup", handleKeyup)
 })
-onUnmounted(() => {
+
+onBeforeUnmount(() => {
   window.removeEventListener("message", handleMessage)
   window.removeEventListener("keyup", handleKeyup)
 })
 </script>
 
 <template>
-  <transition name="fade">
-    <div v-if="shopStore.showShop" id="app" :style="shopStore.isDevMode ? devStyles : {}">
-      <main class="shop">
-        <main class="shop__container">
-          <LeftMain />
-          <RightMain />
-        </main>
-      </main>
-    </div>
+  <transition name="fade-transition">
+    <main v-if="shopStore.showShop" class="shop-container" id="app" :style="DEV_MODE ? devStyles : {}">
+      <div class="shop-layout">
+        <section class="shop-left">
+          <div class="shop-left-header">
+            <MainHeader :locales="configStore.locales.main.header" position="left" />
+            <CategoryList />
+          </div>
+          <ItemList />
+        </section>
+
+        <section class="shop-right">
+          <MainHeader :locales="configStore.locales.cart.header" position="right" />
+          <div class="shop-cart">
+            <CartItems />
+            <CartPayment />
+          </div>
+        </section>
+      </div>
+    </main>
   </transition>
 </template>
 
-<style lang="scss">
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-  margin: 0;
-}
-
-body {
-  -webkit-font-smoothing: antialiased;
-  text-rendering: optimizeLegibility;
-  image-rendering: optimizeQuality;
-
+<style scoped>
+.shop-container {
+  position: absolute;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   overflow: hidden;
-  overflow-wrap: break-word;
-  word-wrap: break-word;
-  white-space: pre-wrap;
-  margin: 0;
-  padding: 0;
+  background-color: rgba(10, 10, 10, 0.93);
 
-  user-select: none;
+  .shop-layout {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100vw;
+    height: 100vh;
+    padding: 8vh;
+    gap: 0.5vh;
+  }
 }
 
-@font-face {
-  font-family: "PFDinDisplayPro-Medium";
-  font-style: normal;
-  font-weight: normal;
-  src:
-    local("PFDinDisplayPro-Medium"),
-    url("@/assets/fonts/PFDinDisplayPro-Medium.woff") format("woff");
-}
-@font-face {
-  font-family: "PFDinDisplayPro-Bold";
-  font-style: normal;
-  font-weight: normal;
-  src:
-    local("PFDinDisplayPro-Bold"),
-    url("@/assets/fonts/PFDinDisplayPro-Bold.woff") format("woff");
-}
-
-.fade {
+.fade-transition {
   &-enter-active,
   &-leave-active {
     transition: opacity 0.25s ease;
@@ -112,28 +114,38 @@ body {
   }
 }
 
-.shop {
-  position: absolute;
+.shop-left {
   display: flex;
-  inset: 0;
-  overflow: hidden;
-  justify-content: center;
-  align-items: center;
-  width: 100vw;
-  height: 100vh;
-  font-family: "PFDinDisplayPro-Medium", sans-serif;
-  background-color: rgba(10, 10, 10, 0.93);
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  width: 70%;
+  height: 100%;
+  gap: 2vh;
 
-  &__container {
+  .shop-left-header {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+  }
+}
+
+.shop-right {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-end;
+  width: 27.5%;
+  height: 100%;
+  gap: 2vh;
+
+  .shop-cart {
     position: relative;
     display: flex;
-    flex-direction: row;
-    width: 100vw;
-    height: 100vh;
-    padding: 8vh;
-    color: white;
-    gap: 0.5vh;
+    flex-direction: column;
     justify-content: space-between;
+    width: 100%;
+    height: 100%;
   }
 }
 </style>
