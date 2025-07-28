@@ -1,6 +1,9 @@
 -- Configuration
-local Functions = require("config.cfg_functions")
-local Locales = require("config.cfg_locales")
+local Config = require("config.main")
+local Functions = require("config.functions")
+
+-- Locales
+local locales = lib.loadJson(("locales.%s"):format(Config.Locale))
 
 ---@param source number
 ---@param shopData table
@@ -14,8 +17,8 @@ lib.callback.register("cloud-shop:buyLicense", function(source, shopData)
 	local licenseLabel = shopData.Requirement.License.Label
 	local licensePrice = shopData.Requirement.License.Price
 
-	local cashAvailable = bridge.money.get(source, "cash")
-	local bankAvailable = bridge.money.get(source, "bank")
+	local cashAvailable = Bridge.Money.Get(source, "cash")
+	local bankAvailable = Bridge.Money.Get(source, "bank")
 	local accountType = nil
 
 	if cashAvailable >= licensePrice then
@@ -23,21 +26,23 @@ lib.callback.register("cloud-shop:buyLicense", function(source, shopData)
 	elseif bankAvailable >= licensePrice then
 		accountType = "bank"
 	else
-		Functions.notify.server(source, {
-			title = Locales.notify.no_money.license.title,
-			description = Locales.notify.no_money.license.description:format(licenseLabel),
-			type = Locales.notify.no_money.license.type,
+		Functions.Notify.Server(source, {
+			title = locales.notify.no_money.license.title,
+			description = locales.notify.no_money.license.description:format(licenseLabel),
+			type = locales.notify.no_money.license.type,
 		})
 		return false, "No money"
 	end
 
-	bridge.money.remove(source, accountType, licensePrice)
-	bridge.license.add(source, licenseType)
+	local success = Bridge.Money.Remove(source, accountType, licensePrice)
+	if not success then return false, "Failed to remove money from player" end
 
-	Functions.notify.server(source, {
-		title = Locales.notify.payment_success.license.title,
-		description = Locales.notify.payment_success.license.description:format(licenseLabel, licensePrice),
-		type = Locales.notify.payment_success.license.type,
+	Bridge.License.Add(source, licenseType)
+
+	Functions.Notify.Server(source, {
+		title = locales.notify.payment_success.license.title,
+		description = locales.notify.payment_success.license.description:format(licenseLabel, licensePrice),
+		type = locales.notify.payment_success.license.type,
 	})
 	return true, "Successfully bought license"
 end)

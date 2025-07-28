@@ -1,4 +1,4 @@
-local Config = require("config.cfg_main")
+local Config = require("config.main")
 
 ---@param name string
 ---@param resource string

@@ -1,5 +1,8 @@
 -- Configuration
-local Locales = require("config.cfg_locales")
+local Config = require("config.main")
+
+-- Locales
+local locales = lib.loadJson(("locales.%s"):format(Config.Locale))
 
 ---@param shopKey string
 ---@param shopData table
@@ -10,15 +13,15 @@ local function licenseDialog(shopKey, shopData)
 	LocalPlayer.state:set("currentShop", shopKey, true)
 
 	local dialog = lib.alertDialog({
-		header = Locales.dialog.license.header:format(licenseLabel),
-		content = Locales.dialog.license.content:format(licenseLabel, licensePrice),
+		header = locales.dialog.license.header:format(licenseLabel),
+		content = locales.dialog.license.content:format(licenseLabel, licensePrice),
 		centered = true,
 		cancel = true,
 		size = "sm",
 	})
 	if dialog == "confirm" then
 		local success, reason = lib.callback.await("cloud-shop:buyLicense", false, shopData)
-		Print.Debug("[licenseDialog]", reason)
+		log.debug("[licenseDialog]", reason)
 
 		playSound(success and "purchase" or "error")
 		LocalPlayer.state:set("currentShop", nil, true)
@@ -29,10 +32,10 @@ end
 ---@param shopData table
 local function handleLicense(shopKey, shopData)
 	if not shopData.Requirement.License.BuyDialog then
-		Functions.notify.client({
-			title = Locales.notify.requirement.license.title,
-			description = Locales.notify.requirement.license.description:format(shopData.Requirement.License.Label),
-			type = Locales.notify.requirement.license.type,
+		Functions.Notify.Client({
+			title = locales.notify.requirement.license.title,
+			description = locales.notify.requirement.license.description:format(shopData.Requirement.License.Label),
+			type = locales.notify.requirement.license.type,
 		})
 		return
 	end

@@ -10,7 +10,7 @@ local function spawnPed(shopData, shopCoords)
 	local pedScenario = pedConfig.Scenario
 
 	if not IsModelInCdimage(pedModel) or not IsModelAPed(pedModel) then
-		Print.Error("[spawnPed] Ped hash is not valid, failed to spawn ped.")
+		log.error("[spawnPed] Ped hash is not valid, failed to spawn ped.")
 		return nil
 	end
 
@@ -23,7 +23,7 @@ local function spawnPed(shopData, shopCoords)
 	end, "[spawnPed] Could not create ped in time.", 3000)
 
 	if not ped or ped == 0 then
-		Print.Error("[spawnPed] Ped creation failed or timed out.")
+		log.error("[spawnPed] Ped creation failed or timed out.")
 		return nil
 	end
 
@@ -44,14 +44,14 @@ local function getNearestPed()
 		local ped, pedPos = peds[i].ped, peds[i].pos
 
 		if not DoesEntityExist(ped) then
-			Print.Error("[getNearestPed] Ped does not exist.")
+			log.error("[getNearestPed] Ped does not exist.")
 			return nil
 		end
 
 		local distance = #(vector3(pedPos.x, pedPos.y, pedPos.z) - playerPos)
 		if distance <= 15.0 then return ped end
 	end
-	Print.Error("[getNearestPed] No valid peds found within 15.0 units.")
+	log.error("[getNearestPed] No valid peds found within 15.0 units.")
 	return nil
 end
 
@@ -83,7 +83,7 @@ end
 local function applySpeechToPed(speechName, speechParam)
 	local shopPed = getNearestPed()
 	if not shopPed then
-		Print.Error("[applySpeechToPed] No valid ped found within 15.0 units to apply speech.")
+		log.error("[applySpeechToPed] No valid ped found within 15.0 units to apply speech.")
 		return
 	end
 

@@ -1,4 +1,4 @@
-local Config = require("config.cfg_main")
+local Config = require("config.main")
 
 local LogLevels = {
 	verbose = { prefix = "^6[VERBOSE]^0 ", enabled = true },
@@ -26,7 +26,7 @@ local function formatArgs(args)
 	return table.concat(args, " ")
 end
 
-local function log(level, ...)
+local function printLog(level, ...)
 	local args = { ... }
 	local logLevelConfig = LogLevels[level]
 	if not logLevelConfig or not logLevelConfig.enabled then return end
@@ -37,20 +37,20 @@ local function log(level, ...)
 	print(formattedMessage)
 end
 
-Print = {}
+log = {}
 
-function Print.Verbose(...)
-	log("verbose", ...)
+function log.verbose(...)
+	printLog("verbose", ...)
 end
-function Print.Debug(...)
-	log("debug", ...)
+function log.debug(...)
+	printLog("debug", ...)
 end
-function Print.Info(...)
-	log("info", ...)
+function log.info(...)
+	printLog("info", ...)
 end
-function Print.Warn(...)
-	log("warn", ...)
+function log.warn(...)
+	printLog("warn", ...)
 end
-function Print.Error(...)
-	log("error", ...)
+function log.error(...)
+	printLog("error", ...)
 end

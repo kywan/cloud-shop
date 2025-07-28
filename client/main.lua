@@ -1,9 +1,11 @@
 if not LoadResourceFile(cache.resource, "web/dist/index.html") then error("UI has not been built! Download the release version from https://github.com/cloud-resources/cloud-shop/releases") end
 
 -- Configuration
-local Config = require("config.cfg_main")
-local Functions = require("config.cfg_functions")
-local Locales = require("config.cfg_locales")
+local Config = require("config.main")
+local Functions = require("config.functions")
+
+-- Locales
+local locales = lib.loadJson(("locales.%s"):format(Config.Locale))
 
 -- Modules
 local interaction = require("client.modules.interaction")
@@ -52,8 +54,8 @@ local function createPoints(shopKey, shopData, shopCoords)
 				if IsPlayerDead(cache.playerId) or IsPedInAnyVehicle(cache.ped, false) then return end
 
 				if not LocalPlayer.state["currentShop"] then
-					if shopData.Interaction.helpText.Enabled then Functions.interact.helpText(Locales.interaction.help_text) end
-					if shopData.Interaction.FloatingText.Enabled then Functions.interact.floatingHelpText(Locales.interaction.floating_text, self.ped, self.coords) end
+					if shopData.Interaction.helpText.Enabled then Functions.Interact.HelpText(locales.interaction.help_text) end
+					if shopData.Interaction.FloatingText.Enabled then Functions.Interact.FloatingHelpText(locales.interaction.floating_text, self.ped, self.coords) end
 				end
 
 				if IsControlJustReleased(0, shopData.Interaction.OpenKey) then interaction.open(shopKey, shopData) end
@@ -69,7 +71,7 @@ CreateThread(function()
 
 			if shopData.Blip.Enabled then createBlip(shopCoords, shopData.Blip) end
 			createPoints(shopKey, shopData, shopCoords)
-			if shopData.Interaction.Target.Enabled then Functions.interact.addTarget(shopKey, shopData, shopCoords, interaction.open) end
+			if shopData.Interaction.Target.Enabled then Functions.Interact.AddTarget(shopKey, shopData, shopCoords, interaction.open) end
 		end
 	end
 end)
@@ -78,7 +80,7 @@ end)
 
 local function handleTransaction(transactionType, cartArray)
 	local success, reason = lib.callback.await("cloud-shop:processTransaction", false, transactionType, cartArray)
-	if reason then Print.Debug("[handleTransaction]", reason) end
+	if reason then log.debug("[handleTransaction]", reason) end
 
 	playSound(success and "purchase" or "error")
 	return success
@@ -97,7 +99,7 @@ RegisterNUICallback("shop:callback", function(data, cb)
 		end,
 
 		payItems = function()
-			Print.Debug(("[NUI:payItems]\nPayment Type: %s\nCart Array: %s"):format(data.type, json.encode(data.cart)))
+			log.debug(("[NUI:payItems]\nPayment Type: %s\nCart Array: %s"):format(data.type, json.encode(data.cart)))
 
 			local success = handleTransaction(data.type, data.cart)
 			if success then shopPeds.applySpeech("Generic_Thanks", "Speech_Params_Force_Shouted_Critical") end
@@ -113,9 +115,9 @@ RegisterNUICallback("shop:callback", function(data, cb)
 			cb(shopData.Items)
 		end,
 		getLocales = function()
-			Locales.ui.main.header = shopData.Locales.MainHeader
-			Locales.ui.cart.header = shopData.Locales.CartHeader
-			cb({ imagePath = Config.Inventory.ImagePath, soundVolume = (GetProfileSetting(300) / 10), locales = Locales.ui })
+			locales.ui.main.header = shopData.Locales.MainHeader
+			locales.ui.cart.header = shopData.Locales.CartHeader
+			cb({ imagePath = Config.ImagePath, soundVolume = (GetProfileSetting(300) / 10), locales = locales.ui })
 		end,
 
 		-- Sounds

@@ -1,13 +1,9 @@
 -- Configuration
-local Config = require("config.cfg_main")
-local Functions = require("config.cfg_functions")
-local Locales = require("config.cfg_locales")
+local Config = require("config.main")
+local Functions = require("config.functions")
 
----@param itemName string
----@return boolean
-local function isWeapon(itemName)
-	return itemName:sub(1, 7):lower() == "weapon_" and not Config.Inventory.WeaponAsItem and not GetResourceState("ox_inventory") == "started" and not GetResourceState("qb-inventory") == "started"
-end
+-- Locales
+local locales = lib.loadJson(("locales.%s"):format(Config.Locale))
 
 ---@param source number
 ---@param type string
@@ -39,58 +35,42 @@ lib.callback.register("cloud-shop:processTransaction", function(source, type, ca
 		local configItem = validItems[item.name]
 		if not configItem then return false, "Invalid item: " .. item.name end
 
-		if item.price ~= configItem.price then return false, "Invalid price for item: " .. item.name end
 		if item.quantity <= 0 or item.quantity > 999 then return false, "Invalid quantity for item: " .. item.name end
 
-		local availableMoney = bridge.money.get(source, accountType)
-		local totalItemPrice = (item.price * item.quantity) or 0
+		if item.price ~= configItem.price then return false, "Invalid price for item: " .. item.name end
 
-		if availableMoney <= totalItemPrice then
-			Functions.notify.server(source, {
-				title = Locales.notify.no_money.shop.title,
-				description = Locales.notify.no_money.shop.description:format(item.label),
-				type = Locales.notify.no_money.shop.type,
-			})
-			goto skipItem
-		end
+		local availableMoney = Bridge.Money.Get(source, accountType)
+		local totalItemPrice = item.price * item.quantity
 
-		if isWeapon(item.name) then
-			if not bridge.weapon.has(source, item.name) then
-				bridge.money.remove(source, accountType, totalItemPrice)
-				bridge.weapon.add(source, item.name)
-				totalCartPrice = totalCartPrice + totalItemPrice
-			else
-				Functions.notify.server(source, {
-					title = Locales.notify.cant_carry.weapon.title,
-					description = Locales.notify.cant_carry.weapon.description:format(item.label),
-					type = Locales.notify.cant_carry.weapon.type,
+		if availableMoney >= totalItemPrice then
+			local success, message = Bridge.Item.Add(source, item.name, item.quantity)
+			if not success then
+				Functions.Notify.Server(source, {
+					title = locales.notify.cant_carry.item.title,
+					description = locales.notify.cant_carry.item.description:format(item.label or item.name),
+					type = locales.notify.cant_carry.item.type,
 				})
+				break
 			end
+			totalCartPrice = totalCartPrice + (item.price * item.quantity)
 		else
-			if bridge.item.canAdd(source, item.name, item.quantity) then
-				bridge.money.remove(source, accountType, totalItemPrice)
-				bridge.item.add(source, item.name, item.quantity)
-				totalCartPrice = totalCartPrice + totalItemPrice
-			else
-				Functions.notify.server(source, {
-					title = Locales.notify.cant_carry.item.title,
-					description = Locales.notify.cant_carry.item.description:format(item.label),
-					type = Locales.notify.cant_carry.item.type,
-				})
-			end
+			Functions.Notify.Server(source, {
+				title = locales.notify.no_money.shop.title,
+				description = locales.notify.no_money.shop.description:format(item.label),
+				type = locales.notify.no_money.shop.type,
+			})
 		end
-
-		::skipItem::
 	end
 
-	if totalCartPrice > 0 then
-		Functions.notify.server(source, {
-			title = Locales.notify.payment_success.shop.title,
-			description = Locales.notify.payment_success.shop.description:format(totalCartPrice),
-			type = Locales.notify.payment_success.shop.type,
-		})
-		return true, "Purchased item(s) for $" .. totalCartPrice
-	end
+	if totalCartPrice <= 0 then return false, "Total cart price is zero" end
 
-	return false, "Transaction failed"
+	local success = Bridge.Money.Remove(source, accountType, totalCartPrice)
+	if not success then return false, "Failed to remove money from player" end
+
+	Functions.Notify.Server(source, {
+		title = locales.notify.payment_success.shop.title,
+		description = locales.notify.payment_success.shop.description:format(totalCartPrice),
+		type = locales.notify.payment_success.shop.type,
+	})
+	return true, "Purchased item(s) for $" .. totalCartPrice
 end)

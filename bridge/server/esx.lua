@@ -2,39 +2,36 @@
 
 if not detectFramework("esx", "es_extended") then return end
 
+local Config = require("config.main")
+
 local ESX = exports["es_extended"]:getSharedObject()
 
-bridge = {
-	license = {},
-	weapon = {},
-	item = {},
-	money = {},
+Bridge = {
+	License = {},
+	Item = {},
+	Money = {},
 }
 
---- Returns the player object from the given source.
 --- @param source number
---- @return table|nil -- The player object
+--- @return table|nil
 local function getPlayerObject(source)
 	if not source or source == 0 then return nil end
 	return ESX.Player and ESX.Player(source) or ESX.GetPlayerFromId(source)
 end
 
---- Returns the player's job data.
 --- @param source number
---- @return string|nil -- The job name
---- @return number|nil -- The job grade
+--- @return string|nil, number|nil
 lib.callback.register("cloud-shop:getJobData", function(source)
 	local xPlayer = getPlayerObject(source)
 	if not xPlayer then return nil end
 
 	local job = xPlayer.getJob()
-	return job.name, job.grade
+	return job.itemName, job.grade
 end)
 
---- Checks if the player has the specific license.
 ---@param source number
----@param licenseType string -- The license type to check
----@return boolean -- Whether the player has the license
+---@param licenseType string
+---@return boolean
 lib.callback.register("cloud-shop:checkLicense", function(source, licenseType)
 	if not source or source <= 0 then return false end
 	if not licenseType then return false end
@@ -47,87 +44,96 @@ lib.callback.register("cloud-shop:checkLicense", function(source, licenseType)
 	return Citizen.Await(result) --[[ @as boolean ]]
 end)
 
---- Adds a license to the player
 ---@param source number
----@param licenseType string -- The license type to check
-function bridge.license.add(source, licenseType)
+---@param licenseType string
+function Bridge.License.Add(source, licenseType)
 	if not source or source <= 0 then return end
 	if not licenseType then return end
 
 	TriggerEvent("esx_license:addLicense", source, licenseType)
 end
 
---- Checks if the player can carry the specified item and quantity.
----@param source number
----@param name string -- The item name
----@param quantity number -- The quantity to check
----@return boolean -- Whether the player can carry the item
-function bridge.item.canAdd(source, name, quantity)
-	if not source or source <= 0 then return false end
-	if not name then return false end
-	if not quantity or quantity <= 0 then return false end
+---@param itemName string
+---@return boolean
+local function isWeapon(itemName)
+	return itemName:sub(1, 7):lower() == "weapon_" and not Config.WeaponAsItem and GetResourceState("ox_inventory") ~= "started"
+end
 
+---@param source number
+---@param itemName string
+---@param quantity number
+---@return boolean
+local function canCarryItem(source, itemName, quantity)
 	if GetResourceState("ox_inventory") == "started" then
-		return exports.ox_inventory:CanCarryItem(source, name, quantity)
+		return exports.ox_inventory:CanCarryItem(source, itemName, quantity)
 	else
 		local xPlayer = getPlayerObject(source)
 		if not xPlayer then return false end
 
-		return xPlayer.canCarryItem(name, quantity)
+		return xPlayer.canCarryItem(itemName, quantity)
 	end
 end
 
---- Adds an item to the player's inventory.
 ---@param source number
----@param name string -- The item name
----@param quantity number -- The quantity to add
----@return boolean -- Whether the item was added successfully
-function bridge.item.add(source, name, quantity)
-	if not source or source <= 0 then return false end
-	if not name then return false end
-	if not quantity or quantity <= 0 then return false end
-
+---@param itemName string
+---@param quantity number
+---@return boolean, string|nil
+local function addItem(source, itemName, quantity)
 	if GetResourceState("ox_inventory") == "started" then
-		return exports.ox_inventory:AddItem(source, name, quantity)
+		local success = exports.ox_inventory:AddItem(source, itemName, quantity)
+		return success and true or false, success or "Failed to add item"
 	else
 		local xPlayer = getPlayerObject(source)
-		if not xPlayer then return false end
+		if not xPlayer then return false, "Player not found" end
 
-		return xPlayer.addInventoryItem(name, quantity)
+		xPlayer.addInventoryItem(itemName, quantity)
+		return true
 	end
 end
 
---- Checks if the player already has the specified weapon.
 ---@param source number
----@param name string -- The weapon name
----@return boolean -- Whether the weapon is already owned
-function bridge.weapon.has(source, name)
-	if not name then return false end
-
+---@param weaponName string
+---@return boolean
+local function hasWeapon(source, weaponName)
 	local xPlayer = getPlayerObject(source)
 	if not xPlayer then return false end
 
-	return xPlayer.hasWeapon(name)
+	return xPlayer.hasWeapon(weaponName)
 end
 
---- Adds a weapon to the player.
 ---@param source number
----@param name string -- The weapon name
----@return boolean -- Whether the weapon was added successfully
-function bridge.weapon.add(source, name)
-	if not name then return false end
-
+---@param weaponName string
+---@return boolean, string|nil
+local function addWeapon(source, weaponName)
 	local xPlayer = getPlayerObject(source)
-	if not xPlayer then return false end
+	if not xPlayer then return false, "Player not found" end
 
-	return xPlayer.addWeapon(name, 120)
+	xPlayer.addWeapon(weaponName, 120)
+	return true
 end
 
---- Gets the player's money balance for the specified account type
 ---@param source number
----@param accountType string <"cash"|"bank"> -- The account type to check
----@return number|nil -- The money balance
-function bridge.money.get(source, accountType)
+---@param itemName string
+---@param quantity number
+---@return boolean, string|nil
+function Bridge.Item.Add(source, itemName, quantity)
+	if not source or source <= 0 then return false, "Invalid source" end
+	if not itemName then return false, "Invalid item name" end
+	if not quantity or quantity <= 0 then return false, "Invalid quantity" end
+
+	if isWeapon(itemName) then
+		if hasWeapon(source, itemName) then return false, "Already has weapon" end
+		return addWeapon(source, itemName)
+	else
+		if not canCarryItem(source, itemName, quantity) then return false, "Cannot carry item" end
+		return addItem(source, itemName, quantity)
+	end
+end
+
+---@param source number
+---@param accountType string <"cash"|"bank">
+---@return number|nil
+function Bridge.Money.Get(source, accountType)
 	if not accountType then return end
 
 	accountType = accountType == "cash" and "money" or "bank"
@@ -135,21 +141,22 @@ function bridge.money.get(source, accountType)
 	local xPlayer = getPlayerObject(source)
 	if not xPlayer then return nil end
 
-	return xPlayer.getAccount(accountType).money or 0
+	return xPlayer.getAccount(accountType).money or nil
 end
 
---- Removes money from the player's specified account
 ---@param source number
----@param accountType string <"cash"|"bank"> -- The account type to check
----@param amount number -- The amount to remove
-function bridge.money.remove(source, accountType, amount)
-	if not accountType then return end
-	if not amount or amount <= 0 then return end
+---@param accountType string <"cash"|"bank">
+---@param amount number
+---@return boolean
+function Bridge.Money.Remove(source, accountType, amount)
+	if not accountType then return false end
+	if not amount or amount <= 0 then return false end
 
 	accountType = accountType == "cash" and "money" or "bank"
 
 	local xPlayer = getPlayerObject(source)
-	if not xPlayer then return end
+	if not xPlayer then return false end
 
-	return xPlayer.removeAccountMoney(accountType, amount)
+	xPlayer.removeAccountMoney(accountType, amount)
+	return true
 end

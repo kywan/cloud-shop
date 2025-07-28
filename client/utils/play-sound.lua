@@ -1,4 +1,4 @@
-local soundEnabled = require("config.cfg_main").UI.Sounds
+local soundEnabled = require("config.main").EnableSounds
 
 ---@alias SoundKey "select" | "add" | "quantity" | "remove" | "purchase" | "error"
 

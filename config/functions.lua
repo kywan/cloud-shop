@@ -1,5 +1,8 @@
 -- Configuration
-local Locales = require("config.cfg_locales")
+local Config = require("config.main")
+
+-- Locales
+local locales = lib.loadJson(("locales.%s"):format(Config.Locale))
 
 --- Toggles the HUD visibility
 --- @param state boolean -- Whether to enable or disable the HUD
@@ -15,7 +18,6 @@ local function clientNotify(data)
 		title = data.title,
 		description = data.description,
 		type = data.type,
-
 		duration = 5000,
 		position = "top",
 		style = { backgroundColor = "#1E1E1E" },
@@ -30,7 +32,6 @@ local function serverNotify(source, data)
 		title = data.title,
 		description = data.description,
 		type = data.type,
-
 		duration = 5000,
 		position = "top",
 		style = { backgroundColor = "#1E1E1E" },
@@ -73,8 +74,8 @@ local function addTarget(shopKey, shopData, shopCoords, openFunction)
 		size = shopData.Interaction.Target.BoxZoneSize,
 		drawSprite = shopData.Interaction.Target.DrawSprite,
 		options = {
-			icon = Locales.interaction.target.icon,
-			label = Locales.interaction.target.label,
+			icon = locales.interaction.target.icon,
+			label = locales.interaction.target.label,
 			distance = shopData.Interaction.Target.Distance,
 			canInteract = function()
 				return not IsPedInAnyVehicle(cache.ped, false)
@@ -87,14 +88,14 @@ local function addTarget(shopKey, shopData, shopCoords, openFunction)
 end
 
 return {
-	toggleHud = toggleHud,
-	notify = {
-		client = clientNotify,
-		server = serverNotify,
+	ToggleHud = toggleHud,
+	Notify = {
+		Client = clientNotify,
+		Server = serverNotify,
 	},
-	interact = {
-		helpText = helpText,
-		floatingHelpText = floatingHelpText,
-		addTarget = addTarget,
+	Interact = {
+		HelpText = helpText,
+		FloatingHelpText = floatingHelpText,
+		AddTarget = addTarget,
 	},
 }

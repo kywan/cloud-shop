@@ -5,7 +5,7 @@ use_experimental_fxv2_oal "yes"
 
 author "yiruzu"
 description "Cloud Resources - Shop"
-version "2.0.0"
+version "3.0.0"
 
 support "https://discord.gg/jAnEnyGBef"
 repository "https://github.com/cloud-resources/cloud-shop"
@@ -33,6 +33,7 @@ client_scripts {
 files {
     "web/dist/**/*",
     "config/*.lua",
+    "locales/*.json",
     "client/modules/*.lua",
 }
 

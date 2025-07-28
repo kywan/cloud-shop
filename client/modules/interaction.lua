@@ -1,5 +1,5 @@
 -- Configuration
-local Functions = require("config.cfg_functions")
+local Functions = require("config.functions")
 
 -- Modules
 local shopPeds = require("client.modules.shop-ped")
@@ -8,7 +8,7 @@ local checkLicense = require("client.modules.license")
 
 ---@param shopKey string
 local function openShopUI(shopKey)
-	Functions.toggleHud(false)
+	Functions.ToggleHud(false)
 
 	SetNuiFocus(true, true)
 	SendNUIMessage({ action = "toggleShop", showShop = true })
@@ -28,7 +28,7 @@ end
 local function openShop(shopKey, shopData)
 	if not shopKey or not shopData then return end
 
-	Print.Verbose("[openShop]", json.encode({ "Categories:", shopData.Categories, "Items:", shopData.Items }))
+	log.verbose("[openShop]", json.encode({ "Categories:", shopData.Categories, "Items:", shopData.Items }))
 
 	if shopData.Requirement.Job.Required and not checkJob(shopData) then return end
 	if shopData.Requirement.License.Required and not checkLicense(shopKey, shopData) then return end
@@ -45,7 +45,7 @@ local function closeShopUI()
 	end
 	TriggerScreenblurFadeOut(200)
 
-	Functions.toggleHud(true)
+	Functions.ToggleHud(true)
 
 	LocalPlayer.state:set("currentShop", nil, true)
 end

@@ -2,19 +2,15 @@
 
 return {
 	Framework = "auto", -- Options: "esx", "qbox", "qbcore", "custom", or "auto" (auto-detects avaible options)
-	DebugMode = "prod", -- Debug options: "prod" (minimal logs), "dev" (detailed logs), false (disable logs)
+	Locale = "de", -- Options: "en", "de"
+	DebugMode = "dev", -- Options: "prod" (minimal logs), "dev" (detailed logs), false (disable logs)
 
-	UI = {
-		Sounds = true, -- Plays sounds when interacting with the shop interface
-	},
-
-	Inventory = {
-		ImagePath = "nui://ox_inventory/web/images/", -- Path to the item images --? Local folder: "item_images/"
-		WeaponAsItem = true, -- Treat weapons as items (only for supported inventories)
-	},
+	EnableSounds = true, -- Plays sounds when interacting with the shop interface
+	ImagePath = "nui://ox_inventory/web/images/", -- Path to the item images --? Local folder: "item_images/"
+	WeaponAsItem = true, -- Treat weapons as items
 
 	Shops = {
-		["market"] = {
+		["shop"] = {
 			PointRadius = 25.0, -- The radius within which markers, peds, and other game elements related to the shop are displayed
 
 			Locations = {
@@ -94,9 +90,9 @@ return {
 				},
 			},
 
-			Locales = { --? More locales including the currency symbol, button text and more can be found in config/cfg_locales.lua
+			Locales = { --? More locales including the currency symbol, button text and more can be found in "locales/"
 				MainHeader = {
-					title = "Market",
+					title = "Shop",
 					tag = "24/7",
 					description = "Welcome to your local market, where we're always here for you, day or night!\nExplore a curated selection of premium goods, tailored to meet your every need.",
 				},
@@ -143,7 +139,7 @@ return {
 					Enabled = true, -- If true, displays floating text above the shop NPC
 					Distance = 2.5, -- Distance within which floating text is visible and interactable
 				},
-				Target = { -- Uses ox_target by default --? (modifiable in config/cfg_functions.lua)
+				Target = { -- Uses ox_target by default --? (modifiable in config/functions.lua)
 					Enabled = false, -- If true, enables targeting system
 					BoxZoneSize = vec3(4, 4, 4), -- Size of the target zone
 					DrawSprite = true, -- If true, displays a sprite for the target zone
