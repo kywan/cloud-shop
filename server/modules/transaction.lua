@@ -39,11 +39,11 @@ lib.callback.register("cloud-shop:processTransaction", function(source, type, ca
 
 		if item.price ~= configItem.price then return false, "Invalid price for item: " .. item.name end
 
-		local availableMoney = Bridge.Money.Get(source, accountType)
+		local availableMoney = Bridge.GetMoney(source, accountType)
 		local totalItemPrice = item.price * item.quantity
 
 		if availableMoney >= totalItemPrice then
-			local success, message = Bridge.Item.Add(source, item.name, item.quantity)
+			local success, message = Bridge.AddItem(source, item.name, item.quantity)
 			if not success then
 				Functions.Notify.Server(source, {
 					title = locales.notify.cant_carry.item.title,
@@ -64,7 +64,7 @@ lib.callback.register("cloud-shop:processTransaction", function(source, type, ca
 
 	if totalCartPrice <= 0 then return false, "Total cart price is zero" end
 
-	local success = Bridge.Money.Remove(source, accountType, totalCartPrice)
+	local success = Bridge.RemoveMoney(source, accountType, totalCartPrice)
 	if not success then return false, "Failed to remove money from player" end
 
 	Functions.Notify.Server(source, {

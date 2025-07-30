@@ -4,13 +4,9 @@ if not detectFramework("esx", "es_extended") then return end
 
 local Config = require("config.main")
 
-local ESX = exports["es_extended"]:getSharedObject()
+Bridge = {}
 
-Bridge = {
-	License = {},
-	Item = {},
-	Money = {},
-}
+local ESX = exports["es_extended"]:getSharedObject()
 
 --- @param source number
 --- @return table|nil
@@ -46,7 +42,7 @@ end)
 
 ---@param source number
 ---@param licenseType string
-function Bridge.License.Add(source, licenseType)
+function Bridge.AddLicense(source, licenseType)
 	if not source or source <= 0 then return end
 	if not licenseType then return end
 
@@ -116,7 +112,7 @@ end
 ---@param itemName string
 ---@param quantity number
 ---@return boolean, string|nil
-function Bridge.Item.Add(source, itemName, quantity)
+function Bridge.AddItem(source, itemName, quantity)
 	if not source or source <= 0 then return false, "Invalid source" end
 	if not itemName then return false, "Invalid item name" end
 	if not quantity or quantity <= 0 then return false, "Invalid quantity" end
@@ -133,7 +129,7 @@ end
 ---@param source number
 ---@param accountType string <"cash"|"bank">
 ---@return number|nil
-function Bridge.Money.Get(source, accountType)
+function Bridge.GetMoney(source, accountType)
 	if not accountType then return end
 
 	accountType = accountType == "cash" and "money" or "bank"
@@ -148,7 +144,7 @@ end
 ---@param accountType string <"cash"|"bank">
 ---@param amount number
 ---@return boolean
-function Bridge.Money.Remove(source, accountType, amount)
+function Bridge.RemoveMoney(source, accountType, amount)
 	if not accountType then return false end
 	if not amount or amount <= 0 then return false end
 

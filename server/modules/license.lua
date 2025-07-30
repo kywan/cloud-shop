@@ -17,8 +17,8 @@ lib.callback.register("cloud-shop:buyLicense", function(source, shopData)
 	local licenseLabel = shopData.Requirement.License.label
 	local licensePrice = shopData.Requirement.License.price
 
-	local cashAvailable = Bridge.Money.Get(source, "cash")
-	local bankAvailable = Bridge.Money.Get(source, "bank")
+	local cashAvailable = Bridge.GetMoney(source, "cash")
+	local bankAvailable = Bridge.GetMoney(source, "bank")
 	local accountType = nil
 
 	if cashAvailable >= licensePrice then
@@ -34,10 +34,10 @@ lib.callback.register("cloud-shop:buyLicense", function(source, shopData)
 		return false, "No money"
 	end
 
-	local success = Bridge.Money.Remove(source, accountType, licensePrice)
+	local success = Bridge.RemoveMoney(source, accountType, licensePrice)
 	if not success then return false, "Failed to remove money from player" end
 
-	Bridge.License.Add(source, licenseType)
+	Bridge.AddLicense(source, licenseType)
 
 	Functions.Notify.Server(source, {
 		title = locales.notify.payment_success.license.title,
