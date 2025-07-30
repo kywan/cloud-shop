@@ -48,8 +48,8 @@ end
 ---@param shopData table
 ---@return boolean
 local function checkLicense(shopKey, shopData)
-	local checkLicense = lib.callback.await("cloud-shop:checkLicense", false, shopData.Requirement.License.type)
-	if not checkLicense then
+	local hasLicense = lib.callback.await("cloud-shop:hasLicense", false, shopData.Requirement.License.type)
+	if not hasLicense then
 		handleLicense(shopKey, shopData)
 		return false
 	end

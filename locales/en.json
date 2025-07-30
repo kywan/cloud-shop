@@ -52,10 +52,10 @@
         "type": "warning"
       }
     },
-    "cant_carry": {
+    "cant_add": {
       "item": {
-        "title": "Carry Restriction",
-        "description": "You cannot carry the **%s**.",
+        "title": "Purchase Failed",
+        "description": "An error occurred while trying to purchase the **%s**.",
         "type": "error"
       },
       "weapon": {
@@ -67,7 +67,7 @@
     "no_money": {
       "shop": {
         "title": "Purchase Failed",
-        "description": "You do not have enough money to pay for your purchase.",
+        "description": "You don't have enough money to buy the **%s** for **$%s**.",
         "type": "error"
       },
       "license": {

@@ -13,48 +13,7 @@ local function getPlayerObject(source)
 	return exports.qbx_core:GetPlayer(source)
 end
 
---- @param source number
---- @return string|nil, number|nil
-lib.callback.register("cloud-shop:getJobData", function(source)
-	local Player = getPlayerObject(source)
-	if not Player then return nil end
-
-	local job = Player.PlayerData.job or { name = "unknown", grade = { level = 0 } }
-	local gang = Player.PlayerData.gang or { name = "none", label = "unknown", grade = { level = 0 } }
-
-	-- If player has both gang and job, prioritize job info
-	if gang.name ~= "none" and job.name ~= "unemployed" then return job.name, job.grade.level end
-
-	-- Otherwise, use gang if exists, fallback to job
-	return gang.name ~= "none" and gang.label or job.name, gang.name ~= "none" and gang.grade.level or job.grade.level
-end)
-
----@param source number
----@param licenseType string
----@return boolean
-lib.callback.register("cloud-shop:checkLicense", function(source, licenseType)
-	if not source or source <= 0 then return false end
-	if not licenseType then return false end
-
-	local Player = getPlayerObject(source)
-	if not Player then return false end
-
-	return Player.PlayerData.metadata.licences[licenseType] or false
-end)
-
----@param source number
----@param licenseType string
-function Bridge.AddLicense(source, licenseType)
-	if not source or source <= 0 then return end
-	if not licenseType then return end
-
-	local Player = getPlayerObject(source)
-	if not Player then return end
-
-	local licenseTable = Player.PlayerData.metadata.licences
-	licenseTable[licenseType] = true
-	Player.Functions.SetMetaData("licences", licenseTable)
-end
+--[[ Item Handling ]]
 
 ---@param itemName string
 ---@return boolean
@@ -67,22 +26,27 @@ end
 ---@param quantity number
 ---@return boolean
 local function canCarryItem(source, itemName, quantity)
-	if GetResourceState("ox_inventory") == "started" then return exports.ox_inventory:CanCarryItem(source, itemName, quantity) end
-	return true
+	if GetResourceState("ox_inventory") == "started" then
+		return exports.ox_inventory:CanCarryItem(source, itemName, quantity)
+	else
+		return true
+	end
 end
 
 ---@param source number
 ---@param itemName string
 ---@param quantity number
----@return boolean, string|nil
+---@return boolean, string
 local function addItem(source, itemName, quantity)
+	if not canCarryItem(source, itemName, quantity) then return false, "Cannot carry item" end
+
 	if GetResourceState("ox_inventory") == "started" then
 		local success = exports.ox_inventory:AddItem(source, itemName, quantity)
-		return success and true or false, success or "Failed to add item"
+		return success, success and "Item added" or "Failed to add item"
+	else
+		log.error("[Bridge.AddItem] No supported inventory detected")
+		return false, "Failed to add item"
 	end
-
-	log.error("[Bridge.AddItem] Failed to add item to inventory")
-	return false
 end
 
 ---@param source number
@@ -94,28 +58,29 @@ end
 
 ---@param source number
 ---@param weaponName string
----@return boolean, string|nil
+---@return boolean, string
 local function addWeapon(source, weaponName)
-	return false
+	if hasWeapon(source, weaponName) then return false, "Already has weapon" end
+	return false, "Failed to add weapon"
 end
 
 ---@param source number
 ---@param itemName string
 ---@param quantity number
----@return boolean, string|nil
+---@return boolean, string
 function Bridge.AddItem(source, itemName, quantity)
 	if not source or source <= 0 then return false, "Invalid source" end
 	if not itemName then return false, "Invalid item name" end
 	if not quantity or quantity <= 0 then return false, "Invalid quantity" end
 
 	if isWeapon(itemName) then
-		if hasWeapon(source, itemName) then return false, "Already has weapon" end
 		return addWeapon(source, itemName)
 	else
-		if not canCarryItem(source, itemName, quantity) then return false, "Cannot carry item" end
 		return addItem(source, itemName, quantity)
 	end
 end
+
+--[[ Money Handling ]]
 
 ---@param source number
 ---@param accountType string <"cash"|"bank">
@@ -142,3 +107,50 @@ function Bridge.RemoveMoney(source, accountType, amount)
 
 	return Player.Functions.RemoveMoney(accountType, amount)
 end
+
+--[[ License Handling ]]
+
+---@param source number
+---@param licenseType string
+---@return boolean
+lib.callback.register("cloud-shop:hasLicense", function(source, licenseType)
+	if not source or source <= 0 then return false end
+	if not licenseType then return false end
+
+	local Player = getPlayerObject(source)
+	if not Player then return false end
+
+	return Player.PlayerData.metadata.licences[licenseType] or false
+end)
+
+---@param source number
+---@param licenseType string
+function Bridge.AddLicense(source, licenseType)
+	if not source or source <= 0 then return end
+	if not licenseType then return end
+
+	local Player = getPlayerObject(source)
+	if not Player then return end
+
+	local licenseTable = Player.PlayerData.metadata.licences
+	licenseTable[licenseType] = true
+	Player.Functions.SetMetaData("licences", licenseTable)
+end
+
+--[[ Job Handling ]]
+
+--- @param source number
+--- @return string|nil, number|nil
+lib.callback.register("cloud-shop:getJobData", function(source)
+	local Player = getPlayerObject(source)
+	if not Player then return nil end
+
+	local job = Player.PlayerData.job or { name = "unknown", grade = { level = 0 } }
+	local gang = Player.PlayerData.gang or { name = "none", label = "unknown", grade = { level = 0 } }
+
+	-- If player has both gang and job, prioritize job info
+	if gang.name ~= "none" and job.name ~= "unemployed" then return job.name, job.grade.level end
+
+	-- Otherwise, use gang if exists, fallback to job
+	return gang.name ~= "none" and gang.label or job.name, gang.name ~= "none" and gang.grade.level or job.grade.level
+end)
