@@ -123,8 +123,6 @@ end
 function Bridge.GetMoney(source, accountType)
 	if not accountType then return end
 
-	accountType = accountType == "cash" and "money" or "bank"
-
 	local Player = getPlayerObject(source)
 	if not Player then return nil end
 
@@ -138,8 +136,6 @@ end
 function Bridge.RemoveMoney(source, accountType, amount)
 	if not accountType then return false end
 	if not amount or amount <= 0 then return false end
-
-	accountType = accountType == "cash" and "money" or "bank"
 
 	local Player = getPlayerObject(source)
 	if not Player then return false end
