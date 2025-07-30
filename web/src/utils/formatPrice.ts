@@ -5,6 +5,13 @@ export const formatPrice = (number: number): string => {
 
   if (typeof number !== "number") return String(number)
 
-  const currencySymbol = configStore.locales.currency || "$"
-  return `${currencySymbol} ${number.toLocaleString("de-DE")}`
+  const numberLocale = number.toLocaleString("de-DE")
+  const currencySymbol = configStore.locales.currency.symbol || "$"
+  const currencyPosition = configStore.locales.currency.position || "before"
+
+  if (currencyPosition === "before") {
+    return `${currencySymbol} ${numberLocale}`
+  } else {
+    return `${numberLocale} ${currencySymbol}`
+  }
 }

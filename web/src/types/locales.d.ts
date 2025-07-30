@@ -1,4 +1,9 @@
 interface Locales {
+  currency: {
+    symbol: string
+    position: "before" | "after"
+  }
+
   main: {
     header: {
       title: string
@@ -9,6 +14,7 @@ interface Locales {
       add_cart: string
     }
   }
+
   cart: {
     header: {
       title: string
@@ -21,5 +27,4 @@ interface Locales {
       pay_cash: string
     }
   }
-  currency: string
 }

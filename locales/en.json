@@ -1,6 +1,9 @@
 {
   "ui": {
-    "currency": "$",
+    "currency": {
+      "symbol": "$",
+      "position": "before"
+    },
     "main": {
       "item": {
         "add_cart": "Add To Cart"

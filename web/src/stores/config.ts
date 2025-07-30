@@ -6,7 +6,11 @@ export const useConfigStore = defineStore("config", () => {
   const soundVolume = <number>0.5
 
   const locales = <Locales>{
-    currency: "$",
+    currency: {
+      symbol: "$",
+      position: "before",
+    },
+
     main: {
       header: {
         title: "Market",
@@ -18,6 +22,7 @@ export const useConfigStore = defineStore("config", () => {
         add_cart: "Add To Cart",
       },
     },
+
     cart: {
       header: {
         title: "Shopping",
