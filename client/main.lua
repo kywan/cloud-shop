@@ -10,6 +10,7 @@ local locales = lib.loadJson(("locales.%s"):format(Config.Locale))
 -- Modules
 local interaction = require("client.modules.interaction")
 local shopPeds = require("client.modules.shop-ped")
+local handleTransaction = require("client.modules.transaction")
 
 --[[ Initialization ]]
 
@@ -78,14 +79,6 @@ end)
 
 --[[ NUI Callbacks ]]
 
-local function handleTransaction(transactionType, cartArray)
-	local success, reason = lib.callback.await("cloud-shop:processTransaction", false, transactionType, cartArray)
-	if reason then log.debug("[handleTransaction]", reason) end
-
-	playSound(success and "purchase" or "error")
-	return success
-end
-
 RegisterNUICallback("shop:callback", function(data, cb)
 	local actionName = data.action
 	if type(actionName) ~= "string" then return end
@@ -99,7 +92,7 @@ RegisterNUICallback("shop:callback", function(data, cb)
 		end,
 
 		payItems = function()
-			log.debug(("[NUI:payItems]\nPayment Type: %s\nCart Array: %s"):format(data.type, json.encode(data.cart)))
+			log.debug(("[NUI:payItems] Payment Type: %s | Cart Array: %s"):format(data.type, json.encode(data.cart)))
 
 			local success = handleTransaction(data.type, data.cart)
 			if success then shopPeds.applySpeech("Generic_Thanks", "Speech_Params_Force_Shouted_Critical") end
