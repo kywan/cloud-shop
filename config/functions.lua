@@ -65,7 +65,7 @@ end
 
 --- Creates a target zone for interacting with a shop
 --- @param shopKey string -- The shop location key
---- @param shopData {Interaction: {Target: {BoxZoneSize: vector3, DrawSprite: boolean, Distance: number}}}
+--- @param shopData {Interaction: {Target: {boxZoneSize: vector3, drawSprite: boolean, distance: number}}}
 --- @param shopCoords vector4 -- The coordinates for the target zone
 --- @param openFunction function -- The function to open the shop
 local function addTarget(shopKey, shopData, shopCoords, openFunction)
