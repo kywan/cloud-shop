@@ -25,6 +25,8 @@ local function licenseDialog(shopKey, shopData)
 
 		playSound(success and "purchase" or "error")
 		LocalPlayer.state:set("currentShop", nil, true)
+	elseif dialog == "cancel" then
+		LocalPlayer.state:set("currentShop", nil, true)
 	end
 end
 
