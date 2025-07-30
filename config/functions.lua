@@ -71,12 +71,12 @@ end
 local function addTarget(shopKey, shopData, shopCoords, openFunction)
 	exports.ox_target:addBoxZone({
 		coords = shopCoords,
-		size = shopData.Interaction.Target.BoxZoneSize,
-		drawSprite = shopData.Interaction.Target.DrawSprite,
+		size = shopData.Interaction.Target.boxZoneSize,
+		drawSprite = shopData.Interaction.Target.drawSprite,
 		options = {
 			icon = locales.interaction.target.icon,
 			label = locales.interaction.target.label,
-			distance = shopData.Interaction.Target.Distance,
+			distance = shopData.Interaction.Target.distance,
 			canInteract = function()
 				return not IsPedInAnyVehicle(cache.ped, false)
 			end,

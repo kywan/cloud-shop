@@ -13,9 +13,9 @@ lib.callback.register("cloud-shop:buyLicense", function(source, shopData)
 	if not shopData then return false, "Invalid shop data" end
 	if not Player(source).state["currentShop"] then return false, "Invalid shop state" end
 
-	local licenseType = shopData.Requirement.License.Type
-	local licenseLabel = shopData.Requirement.License.Label
-	local licensePrice = shopData.Requirement.License.Price
+	local licenseType = shopData.Requirement.License.type
+	local licenseLabel = shopData.Requirement.License.label
+	local licensePrice = shopData.Requirement.License.price
 
 	local cashAvailable = Bridge.Money.Get(source, "cash")
 	local bankAvailable = Bridge.Money.Get(source, "bank")

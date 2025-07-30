@@ -4,13 +4,13 @@
 function createBlip(coords, config)
 	local blip = AddBlipForCoord(coords.x, coords.y, coords.z)
 
-	SetBlipSprite(blip, config.Sprite)
+	SetBlipSprite(blip, config.sprite)
 	SetBlipDisplay(blip, 4)
-	SetBlipScale(blip, config.Scale)
-	SetBlipColour(blip, config.Color)
+	SetBlipScale(blip, config.scale)
+	SetBlipColour(blip, config.color)
 	SetBlipAsShortRange(blip, true)
 	BeginTextCommandSetBlipName("STRING")
-	AddTextComponentString(config.Name)
+	AddTextComponentString(config.name)
 	EndTextCommandSetBlipName(blip)
 
 	return blip

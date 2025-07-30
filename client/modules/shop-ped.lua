@@ -6,8 +6,8 @@ local peds = {}
 local function spawnPed(shopData, shopCoords)
 	local pedConfig = shopData.Indicator.Ped
 	local pedPos = shopCoords
-	local pedModel = pedConfig.Model
-	local pedScenario = pedConfig.Scenario
+	local pedModel = pedConfig.model
+	local pedScenario = pedConfig.scenario
 
 	if not IsModelInCdimage(pedModel) or not IsModelAPed(pedModel) then
 		log.error("[spawnPed] Ped hash is not valid, failed to spawn ped.")

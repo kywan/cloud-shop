@@ -30,8 +30,8 @@ local function openShop(shopKey, shopData)
 
 	log.verbose("[openShop]", json.encode({ "Categories:", shopData.Categories, "Items:", shopData.Items }))
 
-	if shopData.Requirement.Job.Required and not checkJob(shopData) then return end
-	if shopData.Requirement.License.Required and not checkLicense(shopKey, shopData) then return end
+	if shopData.Requirement.Job.required and not checkJob(shopData) then return end
+	if shopData.Requirement.License.required and not checkLicense(shopKey, shopData) then return end
 
 	openShopUI(shopKey)
 end

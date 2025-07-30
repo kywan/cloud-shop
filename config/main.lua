@@ -2,7 +2,7 @@
 
 return {
 	Framework = "auto", -- Options: "esx", "qbox", "qbcore", "custom", or "auto" (auto-detects avaible options)
-	Locale = "de", -- Options: "en", "de"
+	Locale = "en", -- Options: "en", "de"
 	DebugMode = "dev", -- Options: "prod" (minimal logs), "dev" (detailed logs), false (disable logs)
 
 	EnableSounds = true, -- Plays sounds when interacting with the shop interface
@@ -14,27 +14,27 @@ return {
 			PointRadius = 25.0, -- The radius within which markers, peds, and other game elements related to the shop are displayed
 
 			Locations = {
-				vec4(372.8008, 328.1116, 103.5665, 262.1354), -- Clinton Ave
-				vec4(2555.5110, 380.7313, 108.6229, 0.9597), -- Palomino Ave
-				vec4(-3040.5376, 583.9359, 7.9089, 17.7445), -- Inseno Road
-				vec4(-3243.9229, 1000.0519, 12.8307, 0.7583), -- Barbareno Rd
-				vec4(-2193.4412, 4290.1064, 49.1743, 63.6331), -- Great Ocean Hwy
-				vec4(1959.1536, 3741.4165, 32.3437, 298.7749), -- Niland Ave
-				vec4(2676.5083, 3280.1863, 55.2411, 335.5104), -- Senora Fwy
-				vec4(1728.5699, 6416.7671, 35.0372, 243.3380), -- Senora Fwy 2
-				vec4(1134.2589, -983.0569, 46.4158, 278.9547), -- El Rancho Blvd
-				vec4(-1221.4543, -908.0496, 12.3263, 36.5340), -- San Andreas Ave
-				vec4(-1486.7350, -377.5593, 40.1634, 132.9464), -- Prosperity St
-				vec4(-2966.3162, 391.5883, 15.0433, 86.4455), -- Great Ocean Hwy
-				vec4(24.5062, -1345.5989, 29.4970, 263.3659), -- Inoccence Blvd
-				vec4(-561.7218, 286.8480, 82.1765, 266.4413), -- Milton Rd
-				vec4(-47.2886, -1758.5280, 29.4210, 45.3676), -- Davis Ave
-				vec4(1165.0068, -323.6485, 69.2051, 101.2836), -- West Mirrow Drive
-				vec4(-706.0665, -914.6005, 19.2156, 82.3892), -- Palomino Ave
-				vec4(-1819.4907, 793.5951, 138.0846, 132.5959), -- Banham Canyon Dr
-				vec4(549.2471, 2669.6699, 42.1565, 96.9846), -- Route 68
-				vec4(1392.0671, 3606.1155, 34.9809, 203.5101), -- Algonquin Blvd
-				vec4(1984.2482, 3054.3589, 47.2151, 240.0611), -- Panorama Dr
+				vector4(372.8008, 328.1116, 103.5665, 262.1354), -- Clinton Ave
+				vector4(2555.5110, 380.7313, 108.6229, 0.9597), -- Palomino Ave
+				vector4(-3040.5376, 583.9359, 7.9089, 17.7445), -- Inseno Road
+				vector4(-3243.9229, 1000.0519, 12.8307, 0.7583), -- Barbareno Rd
+				vector4(-2193.4412, 4290.1064, 49.1743, 63.6331), -- Great Ocean Hwy
+				vector4(1959.1536, 3741.4165, 32.3437, 298.7749), -- Niland Ave
+				vector4(2676.5083, 3280.1863, 55.2411, 335.5104), -- Senora Fwy
+				vector4(1728.5699, 6416.7671, 35.0372, 243.3380), -- Senora Fwy 2
+				vector4(1134.2589, -983.0569, 46.4158, 278.9547), -- El Rancho Blvd
+				vector4(-1221.4543, -908.0496, 12.3263, 36.5340), -- San Andreas Ave
+				vector4(-1486.7350, -377.5593, 40.1634, 132.9464), -- Prosperity St
+				vector4(-2966.3162, 391.5883, 15.0433, 86.4455), -- Great Ocean Hwy
+				vector4(24.5062, -1345.5989, 29.4970, 263.3659), -- Inoccence Blvd
+				vector4(-561.7218, 286.8480, 82.1765, 266.4413), -- Milton Rd
+				vector4(-47.2886, -1758.5280, 29.4210, 45.3676), -- Davis Ave
+				vector4(1165.0068, -323.6485, 69.2051, 101.2836), -- West Mirrow Drive
+				vector4(-706.0665, -914.6005, 19.2156, 82.3892), -- Palomino Ave
+				vector4(-1819.4907, 793.5951, 138.0846, 132.5959), -- Banham Canyon Dr
+				vector4(549.2471, 2669.6699, 42.1565, 96.9846), -- Route 68
+				vector4(1392.0671, 3606.1155, 34.9809, 203.5101), -- Algonquin Blvd
+				vector4(1984.2482, 3054.3589, 47.2151, 240.0611), -- Panorama Dr
 			},
 
 			--? For icons, use Iconify: https://icon-sets.iconify.design
@@ -76,17 +76,17 @@ return {
 
 			Requirement = {
 				Job = {
-					Required = false, -- Whether a job is required to access the shop
-					Label = "Police", -- The display name of the required job
-					Name = "police", -- The name of the required job
-					Grade = 0, -- Minimum job grade required to access the shop
+					required = false, -- Whether a job is required to access the shop
+					label = "Police", -- The display name of the required job
+					name = "police", -- The name of the required job
+					grade = 0, -- Minimum job grade required to access the shop
 				},
 				License = {
-					Required = false, -- Whether a license is required to access the shop
-					BuyDialog = true, -- Displays a dialog prompting the player to purchase the required license
-					Label = "Weapon License", -- The display name of the required license
-					Type = "weapon", -- The type of the required license (e.g., "weapon")
-					Price = 1000, -- The cost of the license
+					required = false, -- Whether a license is required to access the shop
+					buyDialog = true, -- Displays a dialog prompting the player to purchase the required license
+					label = "Weapon License", -- The display name of the required license
+					type = "weapon", -- The type of the required license (e.g., "weapon")
+					price = 1000, -- The cost of the license
 				},
 			},
 
@@ -104,46 +104,46 @@ return {
 			},
 
 			Blip = {
-				Enabled = true, -- If true, displays a map blip for the shop locations
-				Name = "Shop [24/7]", -- Name displayed on the map
-				Sprite = 59, -- Blip icon type --? Reference: https://docs.fivem.net/docs/game-references/blips
-				Color = 0, -- Blip color --? Reference: https://docs.fivem.net/docs/game-references/blips/#blip-colors
-				Scale = 0.7, -- Size of the blip
+				enabled = true, -- If true, displays a map blip for the shop locations
+				name = "Shop [24/7]", -- Name displayed on the map
+				sprite = 59, -- Blip icon type --? Reference: https://docs.fivem.net/docs/game-references/blips
+				color = 0, -- Blip color --? Reference: https://docs.fivem.net/docs/game-references/blips/#blip-colors
+				scale = 0.7, -- Size of the blip
 			},
 
 			Indicator = {
 				Ped = {
-					Enabled = true, -- If true, spawns a ped (NPC) at the locations
-					Model = `mp_m_shopkeep_01`, -- Ped model type --? Reference: https://docs.fivem.net/docs/game-references/ped-models
-					Scenario = "WORLD_HUMAN_AA_SMOKE", -- Animation scenario for the ped --? Reference: https://github.com/DioneB/gtav-scenarios
+					enabled = true, -- If true, spawns a ped (NPC) at the locations
+					model = `mp_m_shopkeep_01`, -- Ped model type --? Reference: https://docs.fivem.net/docs/game-references/ped-models
+					scenario = "WORLD_HUMAN_AA_SMOKE", -- Animation scenario for the ped --? Reference: https://github.com/DioneB/gtav-scenarios
 				},
 				Marker = {
-					Enabled = false, -- If true, displays a marker at the shop locations
-					Type = 20, -- Marker type --? Reference: https://docs.fivem.net/docs/game-references/markers
-					Size = vec3(0.7, 0.7, 0.7), -- Size of the marker
-					Color = { 65, 133, 235, 120 }, -- RGBA color of the marker
-					BobUpAndDown = false, -- If true, marker moves up and down
-					FaceCamera = false, -- If true, marker faces the player's camera
-					Rotate = true, -- If true, marker rotates
+					enabled = false, -- If true, displays a marker at the shop locations
+					type = 20, -- Marker type --? Reference: https://docs.fivem.net/docs/game-references/markers
+					size = vec3(0.7, 0.7, 0.7), -- Size of the marker
+					color = { 65, 133, 235, 120 }, -- RGBA color of the marker
+					bobUpAndDown = false, -- If true, marker moves up and down
+					faceCamera = false, -- If true, marker faces the player's camera
+					rotate = true, -- If true, marker rotates
 				},
 			},
 
 			Interaction = {
 				OpenKey = 38, -- Default: 38 (E key) --? Reference: https://docs.fivem.net/docs/game-references/controls
 
-				helpText = {
-					Enabled = false, -- If true, displays floating help text near the interaction point
-					Distance = 2.5, -- Distance within which help text appears and is interactable
+				HelpText = {
+					enabled = false, -- If true, displays floating help text near the interaction point
+					distance = 2.5, -- Distance within which help text appears and is interactable
 				},
 				FloatingText = {
-					Enabled = true, -- If true, displays floating text above the shop NPC
-					Distance = 2.5, -- Distance within which floating text is visible and interactable
+					enabled = true, -- If true, displays floating text above the shop NPC
+					distance = 2.5, -- Distance within which floating text is visible and interactable
 				},
 				Target = { -- Uses ox_target by default --? (modifiable in config/functions.lua)
-					Enabled = false, -- If true, enables targeting system
-					BoxZoneSize = vec3(4, 4, 4), -- Size of the target zone
-					DrawSprite = true, -- If true, displays a sprite for the target zone
-					Distance = 2.5, -- Interaction distance
+					enabled = false, -- If true, enables targeting system
+					boxZoneSize = vec3(4, 4, 4), -- Size of the target zone
+					drawSprite = true, -- If true, displays a sprite for the target zone
+					distance = 2.5, -- Interaction distance
 				},
 			},
 		},
@@ -152,17 +152,17 @@ return {
 			PointRadius = 25.0,
 
 			Locations = {
-				vec4(22.6509, -1105.4863, 29.7970, 161.7508), -- Elgin Ave
-				vec4(-662.2554, -933.3735, 21.8292, 183.0097), -- Palomino Ave
-				vec4(842.3751, -1035.5238, 28.1948, 356.2464), -- Olympic Fwy
-				vec4(254.0491, -50.7247, 69.9410, 76.7617), -- Spanish Ave
-				vec4(2567.8792, 292.3385, 108.7348, 3.7121), -- Palomino Fwy
-				vec4(1692.0569, 3761.0879, 34.7053, 227.8851), -- Algonquin Blvd
-				vec4(-331.7583, 6085.2231, 31.4548, 220.9601), -- Great Ocean Hwy
-				vec4(-1119.0983, 2699.9138, 18.5541, 223.6154), -- Route 68
-				vec4(-1303.8849, -394.7360, 36.6958, 76.3115), -- Morningwood Blvd
-				vec4(810.1567, -2159.2566, 29.6190, 1.3184), -- Popular St
-				vec4(-3173.7952, 1088.4893, 20.8387, 250.4138), -- Barbareno Rd
+				vector4(22.6509, -1105.4863, 29.7970, 161.7508), -- Elgin Ave
+				vector4(-662.2554, -933.3735, 21.8292, 183.0097), -- Palomino Ave
+				vector4(842.3751, -1035.5238, 28.1948, 356.2464), -- Olympic Fwy
+				vector4(254.0491, -50.7247, 69.9410, 76.7617), -- Spanish Ave
+				vector4(2567.8792, 292.3385, 108.7348, 3.7121), -- Palomino Fwy
+				vector4(1692.0569, 3761.0879, 34.7053, 227.8851), -- Algonquin Blvd
+				vector4(-331.7583, 6085.2231, 31.4548, 220.9601), -- Great Ocean Hwy
+				vector4(-1119.0983, 2699.9138, 18.5541, 223.6154), -- Route 68
+				vector4(-1303.8849, -394.7360, 36.6958, 76.3115), -- Morningwood Blvd
+				vector4(810.1567, -2159.2566, 29.6190, 1.3184), -- Popular St
+				vector4(-3173.7952, 1088.4893, 20.8387, 250.4138), -- Barbareno Rd
 			},
 
 			Categories = {
@@ -251,17 +251,17 @@ return {
 
 			Requirement = {
 				Job = {
-					Required = false,
-					Label = "Police",
-					Name = "police",
-					Grade = 0,
+					required = false,
+					label = "Police",
+					name = "police",
+					grade = 0,
 				},
 				License = {
-					Required = true,
-					BuyDialog = true,
-					Label = "Weapon License",
-					Type = "weapon",
-					Price = 1000,
+					required = true,
+					buyDialog = true,
+					label = "Weapon License",
+					type = "weapon",
+					price = 1000,
 				},
 			},
 
@@ -279,46 +279,46 @@ return {
 			},
 
 			Blip = {
-				Enabled = true,
-				Name = "Weapon Shop [24/7]",
-				Sprite = 110,
-				Color = 0,
-				Scale = 0.7,
+				enabled = true,
+				name = "Weapon Shop [24/7]",
+				sprite = 110,
+				color = 0,
+				scale = 0.7,
 			},
 
 			Indicator = {
 				Ped = {
-					Enabled = true,
-					Model = `mp_m_weapexp_01`,
-					Scenario = "WORLD_HUMAN_GUARD_STAND",
+					enabled = true,
+					model = `mp_m_weapexp_01`,
+					scenario = "WORLD_HUMAN_GUARD_STAND",
 				},
 				Marker = {
-					Enabled = false,
-					Type = 20,
-					Size = vec3(0.7, 0.7, 0.7),
-					Color = { 65, 133, 235, 120 },
-					BobUpAndDown = false,
-					FaceCamera = false,
-					Rotate = true,
+					enabled = false,
+					type = 20,
+					size = vec3(0.7, 0.7, 0.7),
+					color = { 65, 133, 235, 120 },
+					bobUpAndDown = false,
+					faceCamera = false,
+					rotate = true,
 				},
 			},
 
 			Interaction = {
 				OpenKey = 38,
 
-				helpText = {
-					Enabled = false,
-					Distance = 2.5,
+				HelpText = {
+					enabled = false,
+					distance = 2.5,
 				},
 				FloatingText = {
-					Enabled = true,
-					Distance = 2.5,
+					enabled = true,
+					distance = 2.5,
 				},
 				Target = {
-					Enabled = false,
-					BoxZoneSize = vec3(4, 4, 4),
-					DrawSprite = true,
-					Distance = 2.5,
+					enabled = false,
+					boxZoneSize = vec3(4, 4, 4),
+					drawSprite = true,
+					distance = 2.5,
 				},
 			},
 		},

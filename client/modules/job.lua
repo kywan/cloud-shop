@@ -11,16 +11,16 @@ local function checkJob(shopData)
 	local jobName, jobGrade = lib.callback.await("cloud-shop:getJobData", false)
 	log.debug(("[checkJob] Job Name: %s, Job Grade: %s"):format(jobName, jobGrade))
 
-	if jobName ~= shopData.Requirement.Job.Name then
+	if jobName ~= shopData.Requirement.Job.name then
 		Functions.Notify.Client({
 			title = locales.notify.requirement.job.title,
-			description = locales.notify.requirement.job.description:format(shopData.Requirement.Job.Label),
+			description = locales.notify.requirement.job.description:format(shopData.Requirement.Job.label),
 			type = locales.notify.requirement.job.type,
 		})
 		return false
 	end
 
-	if jobGrade < shopData.Requirement.Job.Grade then
+	if jobGrade < shopData.Requirement.Job.grade then
 		Functions.Notify.Client({
 			title = locales.notify.requirement.job_grade.title,
 			description = locales.notify.requirement.job_grade.description,

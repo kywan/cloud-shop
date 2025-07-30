@@ -7,8 +7,8 @@ local locales = lib.loadJson(("locales.%s"):format(Config.Locale))
 ---@param shopKey string
 ---@param shopData table
 local function licenseDialog(shopKey, shopData)
-	local licenseLabel = shopData.Requirement.License.Label
-	local licensePrice = shopData.Requirement.License.Price
+	local licenseLabel = shopData.Requirement.License.label
+	local licensePrice = shopData.Requirement.License.price
 
 	LocalPlayer.state:set("currentShop", shopKey, true)
 
@@ -31,10 +31,10 @@ end
 ---@param shopKey string
 ---@param shopData table
 local function handleLicense(shopKey, shopData)
-	if not shopData.Requirement.License.BuyDialog then
+	if not shopData.Requirement.License.buyDialog then
 		Functions.Notify.Client({
 			title = locales.notify.requirement.license.title,
-			description = locales.notify.requirement.license.description:format(shopData.Requirement.License.Label),
+			description = locales.notify.requirement.license.description:format(shopData.Requirement.License.label),
 			type = locales.notify.requirement.license.type,
 		})
 		return
@@ -46,7 +46,7 @@ end
 ---@param shopData table
 ---@return boolean
 local function checkLicense(shopKey, shopData)
-	local checkLicense = lib.callback.await("cloud-shop:checkLicense", false, shopData.Requirement.License.Type)
+	local checkLicense = lib.callback.await("cloud-shop:checkLicense", false, shopData.Requirement.License.type)
 	if not checkLicense then
 		handleLicense(shopKey, shopData)
 		return false

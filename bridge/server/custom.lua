@@ -23,7 +23,7 @@ lib.callback.register("cloud-shop:getJobData", function(source)
 	local Player = getPlayerObject(source)
 	if not Player then return nil end
 
-	return Player.Job.Name, Player.Job.Grade
+	return Player.Job.name, Player.Job.grade
 end)
 
 ---@param source number

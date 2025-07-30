@@ -16,10 +16,10 @@ local shopPeds = require("client.modules.shop-ped")
 LocalPlayer.state:set("currentShop", nil, true)
 
 local function getInteractDistance(shopData)
-	if shopData.Interaction.helpText.Enabled then
-		return shopData.Interaction.helpText.Distance
-	elseif shopData.Interaction.FloatingText.Enabled then
-		return shopData.Interaction.FloatingText.Distance
+	if shopData.Interaction.HelpText.enabled then
+		return shopData.Interaction.HelpText.distance
+	elseif shopData.Interaction.FloatingText.enabled then
+		return shopData.Interaction.FloatingText.distance
 	end
 	return nil
 end
@@ -33,29 +33,29 @@ local function createPoints(shopKey, shopData, shopCoords)
 	})
 
 	function shopPoint:onEnter()
-		if shopData.Indicator.Ped.Enabled then self.ped = shopPeds.spawn(shopData, shopCoords) end
+		if shopData.Indicator.Ped.enabled then self.ped = shopPeds.spawn(shopData, shopCoords) end
 	end
 
 	function shopPoint:onExit()
-		if shopData.Indicator.Ped.Enabled then shopPeds.delete(self.ped) end
+		if shopData.Indicator.Ped.enabled then shopPeds.delete(self.ped) end
 	end
 
 	function shopPoint:nearby()
 		if not LocalPlayer.state["currentShop"] then
-			if shopData.Indicator.Marker.Enabled then
+			if shopData.Indicator.Marker.enabled then
 				local markerConfig = shopData.Indicator.Marker
 				---@diagnostic disable-next-line: missing-parameter
-				DrawMarker(markerConfig.Type, self.coords.x, self.coords.y, self.coords.z, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, markerConfig.Size.x, markerConfig.Size.y, markerConfig.Size.z, markerConfig.Color[1], markerConfig.Color[2], markerConfig.Color[3], markerConfig.Color[4], markerConfig.BobUpAndDown, markerConfig.FaceCamera, 2, markerConfig.Rotate)
+				DrawMarker(markerConfig.type, self.coords.x, self.coords.y, self.coords.z, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, markerConfig.size.x, markerConfig.size.y, markerConfig.size.z, markerConfig.color[1], markerConfig.color[2], markerConfig.color[3], markerConfig.color[4], markerConfig.bobUpAndDown, markerConfig.faceCamera, 2, markerConfig.rotate)
 			end
 		end
 
-		if shopData.Interaction.helpText.Enabled or shopData.Interaction.FloatingText.Enabled then
+		if shopData.Interaction.HelpText.enabled or shopData.Interaction.FloatingText.enabled then
 			if self.isClosest and self.currentDistance <= self.interactDistance then
 				if IsPlayerDead(cache.playerId) or IsPedInAnyVehicle(cache.ped, false) then return end
 
 				if not LocalPlayer.state["currentShop"] then
-					if shopData.Interaction.helpText.Enabled then Functions.Interact.HelpText(locales.interaction.help_text) end
-					if shopData.Interaction.FloatingText.Enabled then Functions.Interact.FloatingHelpText(locales.interaction.floating_text, self.ped, self.coords) end
+					if shopData.Interaction.HelpText.enabled then Functions.Interact.HelpText(locales.interaction.help_text) end
+					if shopData.Interaction.FloatingText.enabled then Functions.Interact.FloatingHelpText(locales.interaction.floating_text, self.ped, self.coords) end
 				end
 
 				if IsControlJustReleased(0, shopData.Interaction.OpenKey) then interaction.open(shopKey, shopData) end
@@ -69,9 +69,9 @@ CreateThread(function()
 		for i = 1, #shopData.Locations do
 			local shopCoords = shopData.Locations[i]
 
-			if shopData.Blip.Enabled then createBlip(shopCoords, shopData.Blip) end
+			if shopData.Blip.enabled then createBlip(shopCoords, shopData.Blip) end
 			createPoints(shopKey, shopData, shopCoords)
-			if shopData.Interaction.Target.Enabled then Functions.Interact.AddTarget(shopKey, shopData, shopCoords, interaction.open) end
+			if shopData.Interaction.Target.enabled then Functions.Interact.AddTarget(shopKey, shopData, shopCoords, interaction.open) end
 		end
 	end
 end)
