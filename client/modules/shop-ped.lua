@@ -60,9 +60,8 @@ local function removePed(ped)
 	if not DoesEntityExist(ped) then return end
 	DeletePed(ped)
 
-	for i = 1, #peds do
-		local shopPed = peds[i].ped
-		if shopPed == ped then
+	for i = #peds, 1, -1 do
+		if peds[i].ped == ped then
 			peds[i] = peds[#peds]
 			peds[#peds] = nil
 			break
