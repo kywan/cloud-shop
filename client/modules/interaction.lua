@@ -2,7 +2,7 @@
 local Functions = require("config.functions")
 
 -- Modules
-local shopPeds = require("client.modules.shop-ped")
+local ShopPeds = require("client.modules.shop-ped")
 local checkJob = require("client.modules.job")
 local checkLicense = require("client.modules.license")
 
@@ -20,7 +20,7 @@ local function openShopUI(shopKey)
 
 	LocalPlayer.state:set("currentShop", shopKey, true)
 
-	shopPeds.applySpeech("Generic_Hi", "Speech_Params_Force")
+	ShopPeds.ApplySpeech("Generic_Hi", "Speech_Params_Force")
 end
 
 ---@param shopKey string
@@ -52,12 +52,12 @@ end
 
 local function closeShop()
 	closeShopUI()
-	shopPeds.applySpeech("Generic_Bye", "Speech_Params_Force")
+	ShopPeds.ApplySpeech("Generic_Bye", "Speech_Params_Force")
 end
 
 return {
-	open = openShop,
-	openUI = openShopUI,
-	close = closeShop,
-	closeUI = closeShopUI,
+	Open = openShop,
+	OpenUI = openShopUI,
+	Close = closeShop,
+	CloseUI = closeShopUI,
 }

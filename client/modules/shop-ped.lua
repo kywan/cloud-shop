@@ -92,9 +92,8 @@ local function applySpeechToPed(speechName, speechParam)
 end
 
 return {
-	spawn = spawnPed,
-	getNearest = getNearestPed,
-	delete = removePed,
-	deleteAll = removeAllPeds,
-	applySpeech = applySpeechToPed,
+	Spawn = spawnPed,
+	Delete = removePed,
+	DeleteAll = removeAllPeds,
+	ApplySpeech = applySpeechToPed,
 }

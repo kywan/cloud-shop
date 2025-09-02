@@ -2,6 +2,6 @@ if not detectFramework("custom", "your_framework") then return end
 
 -- [[ Death Handling ]]
 
-local interaction = require("client.modules.interaction")
+local Interaction = require("client.modules.interaction")
 
-AddEventHandler("baseevents:onPlayerDied", interaction.closeUI)
+AddEventHandler("baseevents:onPlayerDied", Interaction.CloseUI)

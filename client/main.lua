@@ -8,8 +8,8 @@ local Functions = require("config.functions")
 local locales = lib.loadJson(("locales.%s"):format(Config.Locale))
 
 -- Modules
-local interaction = require("client.modules.interaction")
-local shopPeds = require("client.modules.shop-ped")
+local Interaction = require("client.modules.interaction")
+local ShopPeds = require("client.modules.shop-ped")
 local handleTransaction = require("client.modules.transaction")
 
 --[[ Initialization ]]
@@ -34,11 +34,11 @@ local function createPoints(shopKey, shopData, shopCoords)
 	})
 
 	function shopPoint:onEnter()
-		if shopData.Indicator.Ped.enabled then self.ped = shopPeds.spawn(shopData, shopCoords) end
+		if shopData.Indicator.Ped.enabled then self.ped = ShopPeds.Spawn(shopData, shopCoords) end
 	end
 
 	function shopPoint:onExit()
-		if shopData.Indicator.Ped.enabled then shopPeds.delete(self.ped) end
+		if shopData.Indicator.Ped.enabled then ShopPeds.Delete(self.ped) end
 	end
 
 	function shopPoint:nearby()
@@ -59,7 +59,7 @@ local function createPoints(shopKey, shopData, shopCoords)
 					if shopData.Interaction.FloatingText.enabled then Functions.Interact.FloatingHelpText(locales.interaction.floating_text, self.ped, self.coords) end
 				end
 
-				if IsControlJustReleased(0, shopData.Interaction.OpenKey) then interaction.open(shopKey, shopData) end
+				if IsControlJustReleased(0, shopData.Interaction.OpenKey) then Interaction.Open(shopKey, shopData) end
 			end
 		end
 	end
@@ -72,7 +72,7 @@ CreateThread(function()
 
 			if shopData.Blip.enabled then createBlip(shopCoords, shopData.Blip) end
 			createPoints(shopKey, shopData, shopCoords)
-			if shopData.Interaction.Target.enabled then Functions.Interact.AddTarget(shopKey, shopData, shopCoords, interaction.open) end
+			if shopData.Interaction.Target.enabled then Functions.Interact.AddTarget(shopKey, shopData, shopCoords, Interaction.Open) end
 		end
 	end
 end)
@@ -87,7 +87,7 @@ RegisterNUICallback("shop:callback", function(data, cb)
 
 	local handlers = {
 		closeShop = function()
-			local success = pcall(interaction.close)
+			local success = pcall(Interaction.Close)
 			cb(success)
 		end,
 
@@ -95,7 +95,7 @@ RegisterNUICallback("shop:callback", function(data, cb)
 			log.debug(("[NUI:payItems] Payment Type: %s | Cart Array: %s"):format(data.type, json.encode(data.cart)))
 
 			local success = handleTransaction(data.type, data.cart)
-			if success then shopPeds.applySpeech("Generic_Thanks", "Speech_Params_Force_Shouted_Critical") end
+			if success then ShopPeds.ApplySpeech("Generic_Thanks", "Speech_Params_Force_Shouted_Critical") end
 			cb(success)
 		end,
 
@@ -140,8 +140,8 @@ end)
 -- [[ Clean Up ]]
 
 local function cleanUp()
-	interaction.closeUI()
-	shopPeds.deleteAll()
+	Interaction.CloseUI()
+	ShopPeds.DeleteAll()
 end
 
 AddEventHandler("onResourceStop", function(resource)
