@@ -12,7 +12,7 @@
     "cart": {
       "payment": {
         "title": "Payment",
-        "pay_bank": "Bank",
+        "pay_bank": "Card",
         "pay_cash": "Cash"
       }
     }

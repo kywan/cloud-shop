@@ -31,7 +31,7 @@ export const useConfigStore = defineStore("config", () => {
       },
       payment: {
         title: "Payment",
-        pay_bank: "Bank",
+        pay_bank: "Card",
         pay_cash: "Cash",
       },
     },
