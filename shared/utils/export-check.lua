@@ -1,5 +1,3 @@
--- CREDIT: Original idea from buddiestv
-
 ---@param resource string
 ---@param export string
 ---@return boolean

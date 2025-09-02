@@ -148,16 +148,3 @@ AddEventHandler("onResourceStop", function(resource)
 	if resource ~= cache.resource then return end
 	cleanUp()
 end)
-
-AddEventHandler("gameEventTriggered", function(event, data)
-	if event ~= "CEventNetworkEntityDamage" then return end
-	if not LocalPlayer.state["currentShop"] then return end
-
-	local deadPed, isPedDead = data[1], data[4]
-	if not IsPedAPlayer(deadPed) then return end
-
-	local playerId = cache.playerId
-	if not isPedDead or NetworkGetPlayerIndexFromPed(deadPed) ~= playerId then return end
-
-	if IsPlayerDead(playerId) then interaction.closeUI() end
-end)
