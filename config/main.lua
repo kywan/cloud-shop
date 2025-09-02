@@ -77,9 +77,13 @@ return {
 			Requirement = {
 				Job = {
 					required = false, -- Whether a job is required to access the shop
-					label = "Police", -- The display name of the required job
-					name = "police", -- The name of the required job
-					grade = 0, -- Minimum job grade required to access the shop
+					jobs = {
+						{
+							label = "Police", -- The display name of the required job
+							name = "police", -- The name of the required job
+							grade = 0, -- Minimum job grade required to access the shop
+						},
+					},
 				},
 				License = {
 					required = false, -- Whether a license is required to access the shop
@@ -252,9 +256,18 @@ return {
 			Requirement = {
 				Job = {
 					required = false,
-					label = "Police",
-					name = "police",
-					grade = 0,
+					jobs = {
+						{
+							label = "Police",
+							name = "police",
+							grade = 0,
+						},
+						{
+							label = "Sheriff",
+							name = "sheriff",
+							grade = 0,
+						},
+					},
 				},
 				License = {
 					required = true,
