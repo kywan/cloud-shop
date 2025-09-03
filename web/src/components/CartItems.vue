@@ -80,7 +80,7 @@ const validateQuantityInput = (index: number, event?: KeyboardEvent): void => {
           <img class="item-image" :src="getImageSrc(item.name ?? 'fallback-item')" @error="onImageError" :alt="item.name" draggable="false" />
           <div class="text-container">
             <span class="item-label">{{ item.label }}</span>
-            <span class="item-price">{{ formatPrice(item.price) }}</span>
+            <span class="item-price">{{ formatPrice(item.price * item.quantity) }}</span>
           </div>
         </div>
 
