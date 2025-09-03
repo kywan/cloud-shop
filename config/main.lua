@@ -49,24 +49,24 @@ return {
 
 			Items = {
 				-- Food
-				{ name = "bread", label = "Bread", category = "food", price = 40 },
-				{ name = "burger", label = "Burger", category = "food", price = 50 },
-				{ name = "fries", label = "Fries", category = "food", price = 50 },
+				{ name = "fries", label = "Fries", category = "food", price = 30 },
+				{ name = "burger", label = "Burger", category = "food", price = 40 },
+				{ name = "burger_chicken", label = "Chicken Burger", category = "food", price = 50 },
 
 				-- Drinks
 				{ name = "water", label = "Water Bottle", category = "drinks", price = 25 },
 				{ name = "sprunk", label = "Sprunk Can", category = "drinks", price = 35 },
-				{ name = "cola", label = "Cola Can", category = "drinks", price = 35 },
+				{ name = "WEAPON_PETROLCAN", label = "Petrol Can", category = "drinks", price = 35 },
 
 				-- Electronics
 				{ name = "radio", label = "Radio", category = "electronics", price = 300 },
 				{ name = "phone", label = "Phone", category = "electronics", price = 800 },
-				{ name = "rolex", label = "Rolex", category = "electronics", price = 10000 },
+				{ name = "usb_black", label = "USB", category = "electronics", price = 10000 },
 
 				-- Tools
 				{ name = "lockpick", label = "Lockpick", category = "tools", price = 75 },
-				{ name = "binoculars", label = "Binoculars", category = "tools", price = 150 },
-				{ name = "repairkit", label = "Repairkit", category = "tools", price = 200 },
+				{ name = "ziptie", label = "Zip tie", category = "tools", price = 150 },
+				{ name = "paperbag", label = "Paper bag", category = "tools", price = 200 },
 
 				-- Healing
 				{ name = "weed", label = "Weed", category = "healing", price = 15 },
