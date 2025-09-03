@@ -8,6 +8,7 @@ description "Cloud Resources - Shop"
 version "3.0.0"
 
 support "https://discord.gg/jAnEnyGBef"
+documentation "https://docs.cloud-resources.eu/"
 repository "https://github.com/cloud-resources/cloud-shop"
 license "CC BY-NC"
 
