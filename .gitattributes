@@ -1,9 +1,5 @@
 * text=auto eol=lf
 
-*.png binary
-*.jpg binary
-*.jpeg binary
-*.gif binary
-*.svg binary
+*.{png,jpg,jpeg,gif,svg,ico,webp} binary
 
-bun.lock -diff
+bun.lock -merge
