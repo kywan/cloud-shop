@@ -1,0 +1,5 @@
+{
+  "Lua.runtime.version": "Lua 5.4",
+  "Lua.diagnostics.disable": ["lowercase-global", "undefined-global"],
+  "stylua.configPath": ".stylua.toml"
+}
