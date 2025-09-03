@@ -1,6 +1,6 @@
 <script setup lang="ts">
 // External Libraries
-import { computed } from "vue"
+import { computed, ref, watch } from "vue"
 import { Icon } from "@iconify/vue"
 
 // Stores
@@ -13,10 +13,6 @@ const configStore = useConfigStore()
 // Utils
 import { callback } from "@/utils/callback"
 import { formatPrice } from "@/utils/formatPrice"
-
-const totalPrice = computed(() => {
-  return shopStore.cart.reduce((total, item) => total + item.price * item.quantity, 0)
-})
 
 const payCart = async (type: string): Promise<void> => {
   if (shopStore.cart.length === 0) return
@@ -33,12 +29,47 @@ const clearCart = (): void => {
   if (shopStore.cart.length === 0) return
   shopStore.cart = []
 }
+
+const totalPrice = computed(() => shopStore.cart.reduce((total, item) => total + item.price * item.quantity, 0))
+const animatedPrice = ref(totalPrice.value)
+const displayPrice = computed(() => formatPrice(Math.round(animatedPrice.value)))
+
+let rafId: number | null = null
+let startTime: number
+let startValue: number
+let targetValue: number
+const duration = 150
+
+const animatePrice = (target: number) => {
+  if (rafId) cancelAnimationFrame(rafId)
+
+  startTime = performance.now()
+  startValue = animatedPrice.value
+  targetValue = target
+
+  const step = (time: number) => {
+    const elapsed = time - startTime
+    const progress = Math.min(elapsed / duration, 1)
+    const eased = 1 - (1 - progress) * (1 - progress)
+    animatedPrice.value = Math.round(startValue + (targetValue - startValue) * eased)
+
+    if (progress < 1) {
+      rafId = requestAnimationFrame(step)
+    } else {
+      animatedPrice.value = targetValue
+    }
+  }
+
+  rafId = requestAnimationFrame(step)
+}
+
+watch(totalPrice, newPrice => animatePrice(newPrice))
 </script>
 
 <template>
   <section class="payment">
     <div class="payment-title">{{ configStore.locales.cart.payment.title }}</div>
-    <div class="price">{{ formatPrice(totalPrice) }}</div>
+    <div class="price">{{ displayPrice }}</div>
     <div class="pay">
       <button @click="payCart('bank')">
         <Icon icon="mingcute:bank-card-fill" />
