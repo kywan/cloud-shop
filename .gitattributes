@@ -1,0 +1,5 @@
+* text=auto eol=lf
+
+*.{png,jpg,jpeg,gif,svg,ico,webp} binary
+
+bun.lock -merge

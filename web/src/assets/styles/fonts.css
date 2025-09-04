@@ -1,0 +1,13 @@
+@font-face {
+  font-family: "PFDinDisplayPro Bold";
+  font-weight: bold;
+  font-style: normal;
+  src: url("../fonts/PFDinDisplayPro-Bold.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "PFDinDisplayPro Medium";
+  font-weight: 500;
+  font-style: normal;
+  src: url("../fonts/PFDinDisplayPro-Medium.woff2") format("woff2");
+}

@@ -1,131 +1,150 @@
-if not DetectFramework("custom", "your_framework") then return end
+---@diagnostic disable: duplicate-set-field
 
---- Returns the player object from the given source.
+if not detectFramework("custom", "your_framework") then return end
+
+local Config = require("config.main")
+
+Bridge = {}
+
 --- @param source number
 --- @return table|nil
-local function GetPlayerObject(source)
-	---@diagnostic disable-next-line: return-type-mismatch
+local function getPlayerObject(source)
 	if not source or source == 0 then return nil end
-	return Your_Framework.GetPlayer(source) -- Example
+	return exports["your_framework"]:GetPlayer(source)
 end
 
---- Returns the player's job data.
---- @param source number
---- @return string|nil -- The job name
---- @return number|nil -- The job grade
-local function GetJobData(source)
-	local Player = GetPlayerObject(source)
-	if not Player then return nil end
+--[[ Item Handling ]]
 
-	local job = Player.GetJobData() -- Example
-	return job.name, job.grade
-end
-lib.callback.register("cloud-shop:server:GetJobData", GetJobData)
-
---- Checks if the player has the specific license.
----@param source number
----@param licenseType string
+---@param itemName string
 ---@return boolean
-local function HasLicense(source, licenseType)
-	if not source or source == 0 then return false end
-	if not licenseType then return false end
+local function isWeapon(itemName)
+	return itemName:sub(1, 7):lower() == "weapon_" and not Config.WeaponAsItem and GetResourceState("ox_inventory") ~= "started"
+end
 
-	local Player = GetPlayerObject(source)
+---@param source number
+---@param itemName string
+---@param quantity number
+---@return boolean
+local function canCarryItem(source, itemName, quantity)
+	local Player = getPlayerObject(source)
 	if not Player then return false end
 
-	return Player.HasLicense(licenseType) -- Example
-end
-lib.callback.register("cloud-shop:server:HasLicense", HasLicense)
-
---- Adds a license to the player
----@param source number
----@param licenseType string
-function AddLicense(source, licenseType)
-	if not source or source == 0 then return end
-	if not licenseType then return end
-
-	local Player = GetPlayerObject(source)
-	if not Player then return end
-
-	Player.AddLicense(licenseType)
+	return Player.Item.CanCarry(itemName, quantity)
 end
 
---- Checks if the player can carry the specified item and quantity.
 ---@param source number
 ---@param itemName string
----@param itemQuantity number
----@return boolean
-function CanAddItem(source, itemName, itemQuantity)
-	if GetResourceState("ox_inventory") == "started" then
-		return exports.ox_inventory:CanCarryItem(source, itemName, itemQuantity)
-	else
-		local Player = GetPlayerObject(source)
-		if not Player then return false end
+---@param quantity number
+---@return boolean, string
+local function addItem(source, itemName, quantity)
+	if not canCarryItem(source, itemName, quantity) then return false, "Cannot carry item" end
 
-		return Player.CanCarryItem(source, itemName, itemQuantity) -- Example
-	end
+	local Player = getPlayerObject(source)
+	if not Player then return false, "Player not found" end
+
+	return Player.Item.Add(itemName, quantity)
 end
 
---- Adds an item to the player's inventory.
----@param source number
----@param itemName string
----@param itemQuantity number
----@return boolean
-function AddItem(source, itemName, itemQuantity)
-	if GetResourceState("ox_inventory") == "started" then
-		return exports.ox_inventory:AddItem(source, itemName, itemQuantity)
-	else
-		local Player = GetPlayerObject(source)
-		if not Player then return false end
-
-		return Player.AddItem(source, itemName, itemQuantity) -- Example
-	end
-end
-
---- Checks if the player already has the specified weapon.
 ---@param source number
 ---@param weaponName string
 ---@return boolean
-function HasWeapon(source, weaponName)
-	if not source or source == 0 then return false end
-
-	local Player = GetPlayerObject(source)
+local function hasWeapon(source, weaponName)
+	local Player = getPlayerObject(source)
 	if not Player then return false end
 
-	return Player.HasWeapon(weaponName) -- Example
+	return Player.Weapon.Has(weaponName)
 end
 
---- Adds a weapon to the player.
 ---@param source number
 ---@param weaponName string
----@return boolean
-function AddWeapon(source, weaponName)
-	if not source or source == 0 then return false end
+---@return boolean, string
+local function addWeapon(source, weaponName)
+	local Player = getPlayerObject(source)
+	if not Player then return false, "Player not found" end
 
-	local Player = GetPlayerObject(source)
-	if not Player then return false end
+	if hasWeapon(source, weaponName) then return false, "Already has weapon" end
 
-	return Player.AddWeapon(weaponName) -- Example
+	return Player.Weapon.Add(weaponName, 120)
 end
 
---- Gets the player's money balance for the specified account type
+---@param source number
+---@param itemName string
+---@param quantity number
+---@return boolean, string
+function Bridge.AddItem(source, itemName, quantity)
+	if not source or source <= 0 then return false, "Invalid source" end
+	if not itemName then return false, "Invalid item name" end
+	if not quantity or quantity <= 0 then return false, "Invalid quantity" end
+
+	if isWeapon(itemName) then
+		return addWeapon(source, itemName)
+	else
+		return addItem(source, itemName, quantity)
+	end
+end
+
+--[[ Money Handling ]]
+
 ---@param source number
 ---@param accountType string <"cash"|"bank">
 ---@return number|nil
-function GetMoney(source, accountType)
-	local Player = GetPlayerObject(source)
+function Bridge.GetMoney(source, accountType)
+	if not accountType then return end
+
+	local Player = getPlayerObject(source)
 	if not Player then return nil end
 
-	return Player.GetMoney(accountType) or 0 -- Example
+	return Player.Account.Get(accountType).money or nil
 end
 
---- Removes money from the player's specified account
 ---@param source number
 ---@param accountType string <"cash"|"bank">
 ---@param amount number
-function RemoveMoney(source, accountType, amount)
-	local Player = GetPlayerObject(source)
-	if not Player then return end
+---@return boolean
+function Bridge.RemoveMoney(source, accountType, amount)
+	if not accountType then return false end
+	if not amount or amount <= 0 then return false end
 
-	return Player.RemoveMoney(accountType, amount) -- Example
+	local Player = getPlayerObject(source)
+	if not Player then return false end
+
+	return Player.Money.Remove(accountType, amount)
 end
+
+--[[ License Handling ]]
+
+---@param source number
+---@param licenseType string
+---@return boolean
+lib.callback.register("cloud-shop:hasLicense", function(source, licenseType)
+	if not source or source <= 0 then return false end
+	if not licenseType then return false end
+
+	local Player = getPlayerObject(source)
+	if not Player then return false end
+
+	return Player.License.Has(licenseType)
+end)
+
+---@param source number
+---@param licenseType string
+function Bridge.AddLicense(source, licenseType)
+	if not source or source <= 0 then return end
+	if not licenseType then return end
+
+	local Player = getPlayerObject(source)
+	if not Player then return false end
+
+	Player.License.Add(licenseType)
+end
+
+--[[ Job Handling ]]
+
+--- @param source number
+--- @return string|nil, number|nil
+lib.callback.register("cloud-shop:getJobData", function(source)
+	local Player = getPlayerObject(source)
+	if not Player then return nil end
+
+	return Player.Job.name, Player.Job.grade
+end)

@@ -1,9 +1,17 @@
-import { useShopStore } from "@/stores/shop"
+import { useConfigStore } from "@/stores/config"
 
 export const formatPrice = (number: number): string => {
-  const shopStore = useShopStore()
-  if (typeof number !== "number") return `${number}`
+  const configStore = useConfigStore()
 
-  const currencySymbol = shopStore.locales.currency || "$"
-  return `${currencySymbol} ${number.toLocaleString("de-DE")}`
+  if (typeof number !== "number") return String(number)
+
+  const numberLocale = number.toLocaleString("de-DE")
+  const currencySymbol = configStore.locales.currency.symbol || "$"
+  const currencyPosition = configStore.locales.currency.position || "before"
+
+  if (currencyPosition === "before") {
+    return `${currencySymbol} ${numberLocale}`
+  } else {
+    return `${numberLocale} ${currencySymbol}`
+  }
 }

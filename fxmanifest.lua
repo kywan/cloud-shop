@@ -1,38 +1,41 @@
 fx_version "cerulean"
 game "gta5"
-
 lua54 "yes"
 use_experimental_fxv2_oal "yes"
 
 author "yiruzu"
 description "Cloud Resources - Shop"
-version "2.0.0"
+version "3.0.0"
 
 support "https://discord.gg/jAnEnyGBef"
-repository "https://github.com/yiruzu/cloud-shop"
-license "CC BY-NC"
+documentation "https://docs.cloud-resources.eu/"
+repository "https://github.com/cloud-resources/cloud-shop"
+
+dependencies { "ox_lib" }
 
 shared_scripts {
     "@ox_lib/init.lua",
     "shared/utils/*.lua",
 }
+
 server_scripts {
     "bridge/server/*.lua",
     "server/utils/*.lua",
     "server/modules/*.lua",
     "server/*.lua",
 }
+
 client_scripts {
-    "client/*.lua",
+    "bridge/client/*.lua",
+    "client/utils/*.lua",
+    "client/main.lua",
 }
 
 files {
     "web/dist/**/*",
     "config/*.lua",
-    "client/utils/*.lua",
+    "locales/*.json",
     "client/modules/*.lua",
 }
 
 ui_page { "web/dist/index.html" }
-
-dependencies { "ox_lib" }

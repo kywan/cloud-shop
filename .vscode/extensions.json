@@ -1,0 +1,10 @@
+{
+  "recommendations": [
+    "esbenp.prettier-vscode",
+    "vue.volar",
+    "sumneko.lua",
+    "johnnymorganz.stylua",
+    "communityox.cfxlua-vscode-cox",
+    "usernamehw.errorlens"
+  ]
+}
