@@ -1,0 +1,92 @@
+{
+  "ui": {
+    "currency": {
+      "symbol": "$",
+      "position": "before"
+    },
+    "main": {
+      "item": {
+        "add_cart": "Ajouter au panier"
+      }
+    },
+    "cart": {
+      "payment": {
+        "title": "Paiement",
+        "pay_bank": "Carte",
+        "pay_cash": "Espèces"
+      }
+    }
+  },
+
+  "interaction": {
+    "help_text": "~INPUT_CONTEXT~  Voir le catalogue de produits",
+    "floating_text": "~INPUT_CONTEXT~ Voir le catalogue de produits",
+    "target": {
+      "icon": "fa-solid fa-cart-shopping",
+      "label": "Voir le catalogue de produits"
+    }
+  },
+
+  "dialog": {
+    "license": {
+      "header": "Un(e) **%s** est requis(e) pour accéder à cette boutique !",
+      "content": "Souhaitez-vous acheter un(e) **%s** pour **$%s** ?"
+    }
+  },
+
+  "notify": {
+    "requirement": {
+      "job": {
+        "title": "Condition d’accès",
+        "description": "Le métier **%s** est requis pour accéder à cette boutique !",
+        "type": "warning"
+      },
+      "job_grade": {
+        "title": "Condition d’accès",
+        "description": "Votre grade de métier ne répond pas aux conditions pour accéder à cette boutique !",
+        "type": "warning"
+      },
+      "license": {
+        "title": "Condition d’accès",
+        "description": "Un(e) **%s** est requis(e) pour accéder à cette boutique !",
+        "type": "warning"
+      }
+    },
+    "cant_add": {
+      "item": {
+        "title": "Échec de l’achat",
+        "description": "Une erreur est survenue lors de l’achat de **%s**.",
+        "type": "error"
+      },
+      "weapon": {
+        "title": "Restriction de port",
+        "description": "Vous ne pouvez pas porter plusieurs **%s**.",
+        "type": "error"
+      }
+    },
+    "no_money": {
+      "shop": {
+        "title": "Échec de l’achat",
+        "description": "Vous n’avez pas assez d’argent pour acheter **%s** pour **$%s**.",
+        "type": "error"
+      },
+      "license": {
+        "title": "Échec de l’achat",
+        "description": "Vous n’avez pas assez d’argent pour acheter un(e) **%s**.",
+        "type": "error"
+      }
+    },
+    "payment_success": {
+      "shop": {
+        "title": "Achat réussi",
+        "description": "Achat effectué avec succès pour **$%s**.",
+        "type": "success"
+      },
+      "license": {
+        "title": "Achat réussi",
+        "description": "Vous avez acheté un(e) **%s** pour **$%s** avec succès.",
+        "type": "success"
+      }
+    }
+  }
+}
