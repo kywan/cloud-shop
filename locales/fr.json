@@ -1,8 +1,8 @@
 {
   "ui": {
     "currency": {
-      "symbol": "$",
-      "position": "before"
+      "symbol": "€",
+      "position": "after"
     },
     "main": {
       "item": {
