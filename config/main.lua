@@ -2,7 +2,7 @@
 
 return {
 	Framework = "auto", -- Options: "esx", "qbox", "qbcore", "custom", or "auto" (auto-detects avaible options)
-	Locale = "en", -- Options: "en", "de"
+	Locale = "en", -- Options: "en", "de", "fr"
 	DebugMode = "dev", -- Options: "prod" (minimal logs), "dev" (detailed logs), false (disable logs)
 
 	EnableSounds = true, -- Plays sounds when interacting with the shop interface
