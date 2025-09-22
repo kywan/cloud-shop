@@ -2,7 +2,7 @@
 
 return {
 	Framework = "auto", -- Options: "esx", "qbox", "qbcore", "custom", or "auto" (auto-detects avaible options)
-	Locale = "en", -- Options: "en", "de", "fr"
+	Locale = "en", -- Options: "en", "de"
 	DebugMode = "dev", -- Options: "prod" (minimal logs), "dev" (detailed logs), false (disable logs)
 
 	EnableSounds = true, -- Plays sounds when interacting with the shop interface
@@ -10,11 +10,12 @@ return {
 	WeaponAsItem = true, -- Treat weapons as items
 
 	Shops = {
-		["shop"] = {
+		["247"] = {
 			PointRadius = 25.0, -- The radius within which markers, peds, and other game elements related to the shop are displayed
 
 			Locations = {
-				vector4(372.8008, 328.1116, 103.5665, 262.1354), -- Clinton Ave
+                vector4(378.01, 329.20, 103.55, 161.57), -- Clinton Ave
+
 				vector4(2555.5110, 380.7313, 108.6229, 0.9597), -- Palomino Ave
 				vector4(-3040.5376, 583.9359, 7.9089, 17.7445), -- Inseno Road
 				vector4(-3243.9229, 1000.0519, 12.8307, 0.7583), -- Barbareno Rd
@@ -38,65 +39,31 @@ return {
 			},
 
 			--? For icons, use Iconify: https://icon-sets.iconify.design
-			Categories = {
-				{ name = "All Products", type = "all", icon = "ic:round-clear-all" }, --! Required for all shops
-				{ name = "Food", type = "food", icon = "mdi:food-drumstick" },
-				{ name = "Drinks", type = "drinks", icon = "ion:water-sharp" },
-				{ name = "Electronics", type = "electronics", icon = "ic:round-phone-iphone" },
-				{ name = "Tools", type = "tools", icon = "ion:hammer" },
-				{ name = "Healing", type = "healing", icon = "material-symbols:healing" },
-			},
-
-			Items = {
-				-- Food
-				{ name = "fries", label = "Fries", category = "food", price = 30 },
-				{ name = "burger", label = "Burger", category = "food", price = 40 },
-				{ name = "burger_chicken", label = "Chicken Burger", category = "food", price = 50 },
-
-				-- Drinks
-				{ name = "water", label = "Water Bottle", category = "drinks", price = 25 },
-				{ name = "sprunk", label = "Sprunk Can", category = "drinks", price = 35 },
-				{ name = "WEAPON_PETROLCAN", label = "Petrol Can", category = "drinks", price = 35 },
-
-				-- Electronics
-				{ name = "radio", label = "Radio", category = "electronics", price = 300 },
-				{ name = "phone", label = "Phone", category = "electronics", price = 800 },
-				{ name = "usb_black", label = "USB", category = "electronics", price = 10000 },
-
-				-- Tools
-				{ name = "lockpick", label = "Lockpick", category = "tools", price = 75 },
-				{ name = "ziptie", label = "Zip tie", category = "tools", price = 150 },
-				{ name = "paperbag", label = "Paper bag", category = "tools", price = 200 },
-
-				-- Healing
-				{ name = "weed", label = "Weed", category = "healing", price = 15 },
-				{ name = "bandage", label = "Bandage", category = "healing", price = 50 },
-				{ name = "medikit", label = "Medikit", category = "healing", price = 200 },
+            Categories = {
+                { name = "Boutique", type = "all", icon = "emojione-v1:crystal-ball" }, --! Required for all shops
+                { name = "Nouriture", type = "food", icon = "mdi:food-drumstick" },
+                { name = "Snacks", type = "snacks", icon = "mdi:food" },
+                { name = "Boissons", type = "drinks", icon = "ion:water-sharp" },
+                { name = "Cigarettes", type = "smoking", icon = "ic:round-phone-iphone" },
+            },
+            Items = { -- Use a string for single-category items or a table for multi-category items
+                { name = 'cigs_redwood',category = {"smoking"} ,price = 10 },
+                { name = 'cigs_redwood2', category = {"smoking"} ,price = 10 },
+                { name = 'cigs_debonaireb', category = {"smoking"} ,price = 10 },
+                { name = 'cigs_debonaireg', category = {"smoking"} ,price = 10 },
+                { name = 'cigs_cardiaque', category = {"smoking"} ,price = 10 },
+                { name = 'cigs_69brand', category = {"smoking"} ,price = 10 },
+                { name = 'cigs_cok', category = {"smoking"} ,price = 10 },
+                { name = 'cigs_estancia', category = {"smoking"} ,price = 10 },
 			},
 
 			Requirement = {
-				Job = {
-					required = false, -- Whether a job is required to access the shop
-					jobs = {
-						{
-							label = "Police", -- The display name of the required job
-							name = "police", -- The name of the required job
-							grade = 0, -- Minimum job grade required to access the shop
-						},
-					},
-				},
-				License = {
-					required = false, -- Whether a license is required to access the shop
-					buyDialog = true, -- Displays a dialog prompting the player to purchase the required license
-					label = "Weapon License", -- The display name of the required license
-					type = "weapon", -- The type of the required license (e.g., "weapon")
-					price = 1000, -- The cost of the license
-				},
+
 			},
 
 			Locales = { --? More locales including the currency symbol, button text and more can be found in "locales/"
 				MainHeader = {
-					title = "Shop",
+					title = "Boutique",
 					tag = "24/7",
 					description = "Welcome to your local market, where we're always here for you, day or night!\nExplore a curated selection of premium goods, tailored to meet your every need.",
 				},
