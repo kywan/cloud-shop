@@ -38,20 +38,21 @@ return {
 			},
 
 			--? For icons, use Iconify: https://icon-sets.iconify.design
-			Categories = {
-				{ name = "All Products", type = "all", icon = "ic:round-clear-all" }, --! Required for all shops
-				{ name = "Food", type = "food", icon = "mdi:food-drumstick" },
-				{ name = "Drinks", type = "drinks", icon = "ion:water-sharp" },
-				{ name = "Electronics", type = "electronics", icon = "ic:round-phone-iphone" },
-				{ name = "Tools", type = "tools", icon = "ion:hammer" },
-				{ name = "Healing", type = "healing", icon = "material-symbols:healing" },
-			},
+                        Categories = {
+                                { name = "All Products", type = "all", icon = "ic:round-clear-all" }, --! Required for all shops
+                                { name = "Food", type = "food", icon = "mdi:food-drumstick" },
+                                { name = "Snacks", type = "snacks", icon = "mdi:food" },
+                                { name = "Drinks", type = "drinks", icon = "ion:water-sharp" },
+                                { name = "Electronics", type = "electronics", icon = "ic:round-phone-iphone" },
+                                { name = "Tools", type = "tools", icon = "ion:hammer" },
+                                { name = "Healing", type = "healing", icon = "material-symbols:healing" },
+                        },
 
-			Items = {
-				-- Food
-				{ name = "fries", label = "Fries", category = "food", price = 30 },
-				{ name = "burger", label = "Burger", category = "food", price = 40 },
-				{ name = "burger_chicken", label = "Chicken Burger", category = "food", price = 50 },
+                        Items = { -- Use a string for single-category items or a table for multi-category items
+                                -- Food
+                                { name = "fries", label = "Fries", category = { "food", "snacks" }, price = 30 },
+                                { name = "burger", label = "Burger", category = "food", price = 40 },
+                                { name = "burger_chicken", label = "Chicken Burger", category = "food", price = 50 },
 
 				-- Drinks
 				{ name = "water", label = "Water Bottle", category = "drinks", price = 25 },
