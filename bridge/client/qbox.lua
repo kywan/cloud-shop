@@ -11,3 +11,11 @@ RegisterNetEvent("qbx_core:client:onSetMetaData", function(key, oldValue, newVal
 		Interaction.CloseUI()
 	end
 end)
+
+Bridge = {}
+
+---@param itemName string
+---@return Item|nil
+function Bridge.GetItem(itemName)
+    return exports.ox_inventory:Items(itemName) or nil
+end
