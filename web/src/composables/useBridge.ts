@@ -5,6 +5,36 @@ import { useConfigStore } from "@/stores/config"
 // Utils
 import { callback } from "@/utils/callback"
 
+const normalizeItemCategories = (item: RawShopItem): ShopItem => {
+  const categories: string[] = []
+
+  const appendCategory = (category: unknown) => {
+    if (typeof category === "string") {
+      const trimmed = category.trim()
+      if (trimmed !== "") {
+        categories.push(trimmed)
+      }
+    }
+  }
+
+  const rawCategories = [item.categories, item.category]
+
+  for (const entry of rawCategories) {
+    if (Array.isArray(entry)) {
+      entry.forEach(appendCategory)
+    } else {
+      appendCategory(entry)
+    }
+  }
+
+  const uniqueCategories = Array.from(new Set(categories))
+
+  return {
+    ...item,
+    categories: uniqueCategories,
+  }
+}
+
 export const useBridge = () => {
   const shopStore = useShopStore()
   const configStore = useConfigStore()
@@ -36,8 +66,10 @@ export const useBridge = () => {
   }
 
   const getItems = async () => {
-    const items: ShopItem[] = await callback({ action: "getItems" })
-    if (items) shopStore.items = items
+    const items: RawShopItem[] = await callback({ action: "getItems" })
+    if (items) {
+      shopStore.items = items.map(normalizeItemCategories)
+    }
   }
 
   const getLocales = async () => {

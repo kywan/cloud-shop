@@ -15,7 +15,11 @@ import { formatPrice } from "@/utils/formatPrice"
 import { getImageSrc, onImageError } from "@/utils/getImageSrc"
 
 const filteredItems = computed(() => {
-  return shopStore.items.filter(item => shopStore.selectedCategory === "all" || item.category === shopStore.selectedCategory)
+  return shopStore.items.filter(item => {
+    if (shopStore.selectedCategory === "all") return true
+
+    return item.categories.includes(shopStore.selectedCategory)
+  })
 })
 
 const addToCart = (name: string): void => {
@@ -32,7 +36,7 @@ const addToCart = (name: string): void => {
       name: item.name,
       price: item.price,
       quantity: 1,
-      category: item.category,
+      categories: [...item.categories],
     })
   }
   callback({ action: "addItem" })
