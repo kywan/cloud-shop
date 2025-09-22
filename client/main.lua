@@ -16,6 +16,7 @@ local handleTransaction = require("client.modules.transaction")
 
 LocalPlayer.state:set("currentShop", nil, true)
 
+
 local function getInteractDistance(shopData)
 	if shopData.Interaction.HelpText.enabled then
 		return shopData.Interaction.HelpText.distance
@@ -104,9 +105,15 @@ RegisterNUICallback("shop:callback", function(data, cb)
 		getCategories = function()
 			cb(shopData.Categories)
 		end,
-		getItems = function()
-			cb(shopData.Items)
-		end,
+        getItems = function()
+            for i, item in ipairs(shopData.Items) do
+                local bridgeItem = Bridge.GetItem(item.name)
+                if bridgeItem and bridgeItem.label then
+                    item.label = bridgeItem.label
+                end
+            end
+            cb(shopData.Items)
+        end,
 		getLocales = function()
 			locales.ui.main.header = shopData.Locales.MainHeader
 			locales.ui.cart.header = shopData.Locales.CartHeader
