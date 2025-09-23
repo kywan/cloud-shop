@@ -1,5 +1,39 @@
 --? For support, join our Discord server: https://discord.gg/jAnEnyGBef
 
+-- Check if a value exists in a table
+local function contains(tbl, val)
+    for _, v in pairs(tbl) do
+        if v == val then
+            return true
+        end
+    end
+    return false
+end
+
+-- Filter items by category
+local function filterByCategory(category)
+    local result = {}
+    for _, item in pairs(exports.ox_inventory:Items()) do
+        if item.category ~= nill and contains(item.category, category) then
+            local shopItem = {}
+            shopItem.name = item.name
+            shopItem.label = item.label
+            shopItem.category = item.category
+            shopItem.price = item.price
+            table.insert(result, shopItem)
+        end
+    end
+    local json = require("json") -- ou cjson / dkjson selon ce que tu as
+
+    local function dumpJSON(tbl)
+        return json.encode(tbl)
+    end
+
+    print(dumpJSON(result))
+    return result
+end
+
+
 return {
 	Framework = "auto", -- Options: "esx", "qbox", "qbcore", "custom", or "auto" (auto-detects avaible options)
 	Locale = "en", -- Options: "en", "de"
@@ -40,42 +74,42 @@ return {
 
 			--? For icons, use Iconify: https://icon-sets.iconify.design
             Categories = {
-                { name = "Boutique", type = "all", icon = "emojione-v1:crystal-ball" }, --! Required for all shops
-                { name = "Nouriture", type = "food", icon = "mdi:food-drumstick" },
-                { name = "Snacks", type = "snacks", icon = "mdi:food" },
-                { name = "Boissons", type = "drinks", icon = "ion:water-sharp" },
-                { name = "Cigarettes", type = "smoking", icon = "ic:round-phone-iphone" },
+                { name = "Boutique", type = "all", icon = "twemoji:shopping-bags" }, --! Required for all shops
+                { name = "Nouriture", type = "food", icon = "twemoji:sandwich" },
+                { name = "Repas", type = "meal", icon = "twemoji:fork-and-knife-with-plate" },
+                { name = "Snacks", type = "snacks", icon = "twemoji:chocolate-bar" },
+                { name = "Bonbons", type = "gums", icon = "twemoji:candy" },
+                { name = "Boissons", type = "drinks", icon = "twemoji:tropical-drink" },
+                { name = "Softs", type = "soft", icon = "twemoji:beverage-box" },
+                { name = "Alcools", type = "alcool", icon = "twemoji:bottle-with-popping-cork" },
+                { name = "Cigarettes", type = "smoking", icon = "fxemoji:smokingsymbol" },
             },
-            Items = { -- Use a string for single-category items or a table for multi-category items
-                { name = 'cigs_redwood',category = {"smoking"} ,price = 10 },
-                { name = 'cigs_redwood2', category = {"smoking"} ,price = 10 },
-                { name = 'cigs_debonaireb', category = {"smoking"} ,price = 10 },
-                { name = 'cigs_debonaireg', category = {"smoking"} ,price = 10 },
-                { name = 'cigs_cardiaque', category = {"smoking"} ,price = 10 },
-                { name = 'cigs_69brand', category = {"smoking"} ,price = 10 },
-                { name = 'cigs_cok', category = {"smoking"} ,price = 10 },
-                { name = 'cigs_estancia', category = {"smoking"} ,price = 10 },
-			},
+            Items = filterByCategory("smoking"),
 
 			Requirement = {
-
+				Job = {
+					required = false, -- Whether a job is required to access the shop
+				},
+				License = {
+					required = false, -- Whether a license is required to access the shop
+				},
 			},
 
 			Locales = { --? More locales including the currency symbol, button text and more can be found in "locales/"
 				MainHeader = {
 					title = "Boutique",
 					tag = "24/7",
-					description = "Welcome to your local market, where we're always here for you, day or night!\nExplore a curated selection of premium goods, tailored to meet your every need.",
+					description = "Bienvenue dans votre marché local, où nous sommes toujours là pour vous, de jour comme de nuit !\nDécouvrez une sélection soignée de produits de qualité, conçus pour répondre à tous vos besoins.",
 				},
 				CartHeader = {
-					title = "Shopping",
-					tag = "Cart",
-					description = "Review your chosen items and proceed to secure, easy\ncheckout with multiple payment options.",
+					title = "Pannier",
+					tag = "24/7",
+					description = "Vérifiez vos articles sélectionnés et passez à un paiement simple et sécurisé, avec plusieurs options de règlement.",
 				},
 			},
 
 			Blip = {
-				enabled = true, -- If true, displays a map blip for the shop locations
+				enabled = false, -- If true, displays a map blip for the shop locations
 				name = "Shop [24/7]", -- Name displayed on the map
 				sprite = 59, -- Blip icon type --? Reference: https://docs.fivem.net/docs/game-references/blips
 				color = 0, -- Blip color --? Reference: https://docs.fivem.net/docs/game-references/blips/#blip-colors
@@ -107,11 +141,11 @@ return {
 					distance = 2.5, -- Distance within which help text appears and is interactable
 				},
 				FloatingText = {
-					enabled = true, -- If true, displays floating text above the shop NPC
+					enabled = false, -- If true, displays floating text above the shop NPC
 					distance = 2.5, -- Distance within which floating text is visible and interactable
 				},
 				Target = { -- Uses ox_target by default --? (modifiable in config/functions.lua)
-					enabled = false, -- If true, enables targeting system
+					enabled = true, -- If true, enables targeting system
 					boxZoneSize = vec3(4, 4, 4), -- Size of the target zone
 					drawSprite = true, -- If true, displays a sprite for the target zone
 					distance = 2.5, -- Interaction distance
