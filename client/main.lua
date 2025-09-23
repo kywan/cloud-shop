@@ -106,12 +106,6 @@ RegisterNUICallback("shop:callback", function(data, cb)
 			cb(shopData.Categories)
 		end,
         getItems = function()
-            for i, item in ipairs(shopData.Items) do
-                local bridgeItem = Bridge.GetItem(item.name)
-                if bridgeItem and bridgeItem.label then
-                    item.label = bridgeItem.label
-                end
-            end
             cb(shopData.Items)
         end,
 		getLocales = function()
